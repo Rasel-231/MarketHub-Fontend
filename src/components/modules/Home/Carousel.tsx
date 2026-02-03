@@ -14,7 +14,7 @@ const HomeCarousel = () => {
   ];
 
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full mx-auto container mt-10">
       <Carousel 
         showArrows={true} 
         infiniteLoop={true} 

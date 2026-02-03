@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {motion} from "framer-motion"
 const HeroSection = () => {
   return (
-    <section className="relative h-[70vh] md:h-[80vh] lg:h-screen w-full overflow-hidden">
+    <section className="relative h-[70vh] md:h-[80vh] lg:h-screen w-full overflow-hidden ">
       {/* Background Video */}
       <video
         autoPlay

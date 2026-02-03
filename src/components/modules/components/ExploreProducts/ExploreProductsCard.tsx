@@ -1,18 +1,13 @@
-"use client";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { Rating } from "react-simple-star-rating";
+"use client"
+
 import { Heart } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Rating } from "react-simple-star-rating";
 import { Product } from "../TodaysProduct/Types";
 
-
-
-
-
-
-
-const BestSellingProduct = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+const ExploreProductsCard = () => {
+    const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     fetch("/products.json")
@@ -96,8 +91,14 @@ const BestSellingProduct = () => {
           </div>
         ))}
       </div>
+    <div className="flex justify-center items-center">
+    <button className="w-xs my-5 bg-red-500 text-white p-2 px-6 rounded-none text-xs font-bold">
+        View All Products
+    </button>
+</div>
      </div>
   );
 };
 
-export default BestSellingProduct;
+
+export default ExploreProductsCard;

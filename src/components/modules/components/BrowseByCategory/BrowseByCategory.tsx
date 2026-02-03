@@ -15,12 +15,12 @@ const CATEGORIES = [
 
 const BrowseByCategory = () => {
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6 p-4 container mx-auto">
       <MinHeader />
       
       {/* Header Section */}
       <div className="flex justify-between items-center">
-        <p className="font-bold text-2xl">Browse By Category</p>
+        <p className="text-2xl font-extrabold uppercase tracking-wider">Browse By Category</p>
         <div className="flex gap-2">
           <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition">
             <MoveLeft size={20} />

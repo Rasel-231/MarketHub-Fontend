@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "MarketHub | Your Premium E-commerce Destination",
-  description: "Experience seamless online shopping with MarketHub. Discover a wide range of premium products, from electronics to fashion, all in one place with secure payments and fast delivery.",
+  description:
+    "Experience seamless online shopping with MarketHub. Discover a wide range of premium products, from electronics to fashion, all in one place with secure payments and fast delivery.",
 };
 
 export default function RootLayout({
@@ -27,7 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div >{children}</div>
       </body>
     </html>
   );
