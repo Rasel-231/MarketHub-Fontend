@@ -16,7 +16,7 @@ const CATEGORIES = [
 const BrowseByCategory = () => {
   return (
     <div className="space-y-6 p-4 container mx-auto">
-      <MinHeader />
+      <MinHeader title="Categories"/>
       
       {/* Header Section */}
       <div className="flex justify-between items-center">

@@ -7,7 +7,7 @@ import ExploreProductsCard from "./ExploreProductsCard";
 const ExploreProducts = () => {
     return (
        <div className="container mx-auto  m-5 p-5">  
-             <MinHeader/>
+             <MinHeader title="Our Products"/>
             <section className="flex justify-between py-5">
                 
                 <span className="text-2xl font-extrabold uppercase tracking-wider">Explore Our Products</span>

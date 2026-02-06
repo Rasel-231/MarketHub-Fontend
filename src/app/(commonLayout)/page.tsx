@@ -4,6 +4,7 @@ import BestSelling from "@/components/modules/components/BestSelling/BestSelling
 import BrowseByCategory from "@/components/modules/components/BrowseByCategory/BrowseByCategory";
 import ExploreProducts from "@/components/modules/components/ExploreProducts/ExploreProducts";
 import Featured from "@/components/modules/components/Featured/Featured";
+import ReactOrbit from "@/components/modules/components/ReactOrbit/ReactOrbit";
 import Services from "@/components/modules/components/Services/Services";
 import TodaysProduct from "@/components/modules/components/TodaysProduct/TodaysProduct";
 import HomeCarousel from "@/components/modules/Home/Carousel";
@@ -23,6 +24,7 @@ export default function Home() {
       <Banner/>
       <ExploreProducts/>
       <Featured/>
+      <ReactOrbit/>
       <Services/>
      
     </div>

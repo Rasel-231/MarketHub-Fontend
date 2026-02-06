@@ -1,23 +1,22 @@
-import React from "react";
+
 import BreadCumb from "../../common/BreadCumb/BreadCumb";
+
 
 const MyAccount = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
-      {/* Breadcrumb */}
+    <div className="max-w-7xl mx-auto px-4 ">
+   
       <section className="mb-10">
         <BreadCumb />
       </section>
 
-      {/* Main Layout */}
       <section>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Sidebar */}
+         
           <div className="lg:col-span-4 shadow-lg rounded-xl p-6 bg-white border border-gray-100">
-            {/* Manage Account */}
+            
             <div className="mb-6">
               <h1 className="font-bold text-lg mb-3">Manage My Account</h1>
-
               <div className="space-y-2 ml-4">
                 <p className="text-red-500 font-medium cursor-pointer">
                   My Profile
@@ -45,7 +44,7 @@ const MyAccount = () => {
               </div>
             </div>
 
-            {/* Wishlist */}
+          
             <div className="border-t pt-5">
               <h2 className="text-lg font-bold mb-2">My Wishlist</h2>
               <p className="text-gray-500 text-sm ml-4 hover:text-red-500 cursor-pointer transition">
@@ -54,7 +53,7 @@ const MyAccount = () => {
             </div>
           </div>
 
-          {/* Right Side Form */}
+          
           <div className="lg:col-span-8 shadow-lg rounded-xl p-8 bg-white border border-gray-100">
             <h2 className="text-2xl font-bold mb-6">Edit Your Profile</h2>
 
