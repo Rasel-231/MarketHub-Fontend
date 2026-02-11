@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono ,Nunito_Sans} from "next/font/google";
+import { Geist, Geist_Mono, Nunito_Sans } from "next/font/google";
 import "./globals.css";
+import Providers from "@/components/Redux/reduxSetup/Provider";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -8,10 +11,10 @@ const geistSans = Geist({
 });
 
 const nunitoSans = Nunito_Sans({
-  subsets: ['latin'],
-  weight: ['200', '400', '700', '900'], 
-  variable: '--font-nunito', 
-  display: 'swap',
+  subsets: ["latin"],
+  weight: ["200", "400", "700", "900"],
+  variable: "--font-nunito",
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -35,7 +38,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${nunitoSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div >{children}</div>
+        <div>
+          <Providers>{children}
+            <ToastContainer />
+          </Providers>
+        </div>
       </body>
     </html>
   );

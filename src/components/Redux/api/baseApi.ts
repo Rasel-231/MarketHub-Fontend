@@ -1,6 +1,6 @@
 import { getBaseUrl } from "@/lib/config";
 import { axiosBaseQuery } from "../reduxSetup/axiosBaseQuery";
-import { createApi } from "@reduxjs/toolkit/query";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { tagtypeList } from "../reduxSetup/types";
 
 export const baseApi = createApi({

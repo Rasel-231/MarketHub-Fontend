@@ -1,178 +1,147 @@
+"use client";
 
+import { useGetMyProfileQuery } from "@/components/Redux/api/userApi/userApi";
 import BreadCumb from "../../common/BreadCumb/BreadCumb";
 
-
 const MyAccount = () => {
+  const { data: response, isLoading } = useGetMyProfileQuery();
+  const userData = response?.data;
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-red-500 mx-auto mb-4"></div>
+        <p className="text-gray-500 font-medium">Loading profile...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-7xl mx-auto px-4 ">
-   
+    <div className="max-w-7xl mx-auto px-4 pb-10">
       <section className="mb-10">
         <BreadCumb />
       </section>
 
       <section>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-         
-          <div className="lg:col-span-4 shadow-lg rounded-xl p-6 bg-white border border-gray-100">
-            
+          
+          
+          <div className="lg:col-span-4 shadow-lg rounded-xl p-6 bg-white border border-gray-100 h-fit">
             <div className="mb-6">
               <h1 className="font-bold text-lg mb-3">Manage My Account</h1>
               <div className="space-y-2 ml-4">
-                <p className="text-red-500 font-medium cursor-pointer">
-                  My Profile
-                </p>
-                <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">
-                  Address Book
-                </p>
-                <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">
-                  My Payment Options
-                </p>
+                <p className="text-red-500 font-medium cursor-pointer">My Profile</p>
+                <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">Address Book</p>
+                <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">My Payment Options</p>
               </div>
             </div>
 
-            {/* Orders */}
             <div className="mb-6">
               <h1 className="font-bold text-lg mb-3">My Orders</h1>
-
               <div className="space-y-2 ml-4">
-                <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">
-                  My Returns
-                </p>
-                <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">
-                  My Cancellations
-                </p>
+                <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">My Returns</p>
+                <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">My Cancellations</p>
               </div>
             </div>
 
-          
             <div className="border-t pt-5">
               <h2 className="text-lg font-bold mb-2">My Wishlist</h2>
-              <p className="text-gray-500 text-sm ml-4 hover:text-red-500 cursor-pointer transition">
-                View Wishlist Items
-              </p>
+              <p className="text-gray-500 text-sm ml-4 hover:text-red-500 cursor-pointer transition">View Wishlist Items</p>
             </div>
           </div>
 
-          
+   
           <div className="lg:col-span-8 shadow-lg rounded-xl p-8 bg-white border border-gray-100">
             <h2 className="text-2xl font-bold mb-6">Edit Your Profile</h2>
 
             <form className="space-y-6">
-              {/* Profile Inputs */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* First Name */}
+              
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    First Name
-                  </label>
+                  <label className="text-sm font-medium text-gray-700">Name</label>
                   <input
                     type="text"
-                    placeholder="First Name"
-                    className="w-full bg-gray-100 p-3 rounded-md outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
+                    defaultValue={userData?.name}
+                    placeholder="Enter your name"
+                    className="w-full bg-gray-50 p-3 rounded-md border border-gray-200 outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
                   />
                 </div>
 
-                {/* Last Name */}
+               
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    className="w-full bg-gray-100 p-3 rounded-md outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
-                  />
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Email
-                  </label>
+                  <label className="text-sm font-medium text-gray-700">Email Address</label>
                   <input
                     type="email"
-                    placeholder="Your Email"
-                    className="w-full bg-gray-100 p-3 rounded-md outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
+                    defaultValue={userData?.email}
+                  
+                    className="w-full bg-gray-200 p-3 rounded-md border border-gray-200 cursor-not-allowed mt-1 text-gray-500"
                   />
                 </div>
 
-                {/* Phone */}
+                
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Phone
-                  </label>
+                  <label className="text-sm font-medium text-gray-700">Phone Number</label>
                   <input
                     type="text"
-                    placeholder="Your Phone"
-                    className="w-full bg-gray-100 p-3 rounded-md outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
+                    defaultValue={userData?.contactNumber}
+                    placeholder="Your Phone Number"
+                    className="w-full bg-gray-50 p-3 rounded-md border border-gray-200 outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
                   />
                 </div>
 
-                {/* Address */}
-                <div className="md:col-span-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Address
-                  </label>
+              
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Role</label>
                   <input
                     type="text"
-                    placeholder="Your Address"
-                    className="w-full bg-gray-100 p-3 rounded-md outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
+                    defaultValue={userData?.role}
+    
+                    className="w-full bg-gray-50 p-3 rounded-md border border-gray-200 mt-1 capitalize font-semibold text-red-600"
                   />
                 </div>
               </div>
 
-              {/* Password Section */}
+            
               <div className="border-t pt-6">
                 <h3 className="text-lg font-bold mb-4">Password Change</h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Current Password */}
-                  <div className="md:col-span-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Current Password
-                    </label>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Current Password</label>
                     <input
                       type="password"
-                      placeholder="Your Current Password"
-                      className="w-full bg-gray-100 p-3 rounded-md outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
+                      placeholder="Current Password"
+                      className="w-full bg-gray-50 p-3 rounded-md border border-gray-200 outline-none focus:ring-2 focus:ring-red-500 mt-1"
                     />
                   </div>
-
-                  {/* New Password */}
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      New Password
-                    </label>
-                    <input
-                      type="password"
-                      placeholder="Your New Password"
-                      className="w-full bg-gray-100 p-3 rounded-md outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
-                    />
-                  </div>
-
-                  {/* Confirm Password */}
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">
-                      Confirm Password
-                    </label>
-                    <input
-                      type="password"
-                      placeholder="Confirm Password"
-                      className="w-full bg-gray-100 p-3 rounded-md outline-none focus:ring-2 focus:ring-red-500 transition mt-1"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">New Password</label>
+                      <input
+                        type="password"
+                        placeholder="New Password"
+                        className="w-full bg-gray-50 p-3 rounded-md border border-gray-200 outline-none focus:ring-2 focus:ring-red-500 mt-1"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Confirm New Password</label>
+                      <input
+                        type="password"
+                        placeholder="Confirm New Password"
+                        className="w-full bg-gray-50 p-3 rounded-md border border-gray-200 outline-none focus:ring-2 focus:ring-red-500 mt-1"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Buttons */}
-              <div className="flex justify-end gap-4 pt-3">
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-4 pt-4">
                 <button
                   type="button"
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-8 rounded-md transition-all active:scale-95"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-8 rounded-md transition"
                 >
                   Cancel
                 </button>
-
                 <button
                   type="submit"
                   className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-10 rounded-md shadow-md transition-all active:scale-95"

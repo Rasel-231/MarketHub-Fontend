@@ -1,110 +1,131 @@
-"use client"
+"use client";
+
+import React, { useState } from "react";
+ 
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { useCreateUserMutation } from "@/components/Redux/api/userApi/userApi";
 
 const RegisterForm = () => {
+    const [createUser] = useCreateUserMutation();
+    const router = useRouter();
+
+    const [formDataState, setFormDataState] = useState({
+        name: "",
+        email: "",
+        contactNumber: "",
+        password: "",
+        role: "BUYER", 
+        shopName: "",
+        shopSlug: "",
+    });
+    
+    const [file, setFile] = useState<File | null>(null);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormDataState((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        // backend requirement: payload.body
+        formData.append("name", formDataState.name);
+        formData.append("email", formDataState.email);
+        formData.append("password", formDataState.password);
+        formData.append("contactNumber", formDataState.contactNumber);
+        formData.append("role", formDataState.role);
+
+        // Conditional fields for Seller
+        if (formDataState.role === "SELLER") {
+            if (formDataState.shopName) formData.append("shopName", formDataState.shopName);
+            if (formDataState.shopSlug) formData.append("shopSlug", formDataState.shopSlug);
+        }
+
+        // backend requirement: payload.file (key must match your multer config, usually 'profile_images' or 'file')
+        if (file) {
+            formData.append("profile_images", file);
+        }
+
+        try {
+            const res = await createUser(formData).unwrap();
+            if (res) {
+                toast.success("Registration successful!");
+                router.push("/");
+            }
+        } catch  {
+            toast.error("Registration failed!");
+        }
+    };
+
     return (
         <div className="flex justify-center items-center py-10 px-4 bg-gray-50 min-h-screen">
             <div className="max-w-4xl w-full shadow-lg rounded-xl p-6 md:p-10 bg-white border border-gray-100">
-                <h2 className="text-2xl font-bold mb-8 text-gray-800">Register Seller</h2>
+                <h2 className="text-2xl font-bold mb-8 text-gray-800 text-center">Create Account</h2>
 
-                <form className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* First Name */}
+                        {/* Name */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-sm font-semibold text-gray-700">First Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter first name"
-                                className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
-                            />
-                        </div>
-
-                        {/* Last Name */}
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm font-semibold text-gray-700">Last Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter last name"
-                                className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
-                            />
+                            <label className="text-sm font-semibold text-gray-700">Full Name</label>
+                            <input name="name" required onChange={handleChange} type="text" placeholder="Your Name" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
                         </div>
 
                         {/* Email */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-sm font-semibold text-gray-700">Email Address</label>
-                            <input
-                                type="email"
-                                placeholder="example@mail.com"
-                                className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
-                            />
+                            <label className="text-sm font-semibold text-gray-700">Email</label>
+                            <input name="email" required onChange={handleChange} type="email" placeholder="email@example.com" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
                         </div>
 
-                        {/* Phone */}
+                        {/* Contact */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-sm font-semibold text-gray-700">Phone Number</label>
-                            <input
-                                type="tel"
-                                placeholder="+880 1XXX XXXXXX"
-                                className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
-                            />
-                        </div>
-
-                        {/* Address */}
-                        <div className="md:col-span-2 flex flex-col gap-1">
-                            <label className="text-sm font-semibold text-gray-700">Address</label>
-                            <input
-                                type="text"
-                                placeholder="Street, City, Country"
-                                className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
-                            />
+                            <label className="text-sm font-semibold text-gray-700">Contact Number</label>
+                            <input name="contactNumber" required onChange={handleChange} type="text" placeholder="01XXXXXXXXX" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
                         </div>
 
                         {/* Password */}
                         <div className="flex flex-col gap-1">
-                            <label className="text-sm font-semibold text-gray-700">New Password</label>
-                            <input
-                                type="password"
-                                placeholder="••••••••"
-                                className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
-                            />
+                            <label className="text-sm font-semibold text-gray-700">Password</label>
+                            <input name="password" required onChange={handleChange} type="password" placeholder="••••••••" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
                         </div>
 
-                        {/* Profile Image */}
+                        {/* Role Selection */}
+                        <div className="flex flex-col gap-1">
+                            <label className="text-sm font-semibold text-gray-700">Join As</label>
+                            <select name="role" value={formDataState.role} onChange={handleChange} className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition">
+                                <option value="BUYER">Buyer / Customer</option>
+                                <option value="SELLER">Seller / Shop Owner</option>
+                                <option value="ADMIN">Admin</option>
+                            </select>
+                        </div>
+
+                        {/* Profile Photo */}
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-semibold text-gray-700">Profile Image</label>
-                            <input
-                                type="file"
-                                className="w-full bg-gray-50 p-2.5 rounded-lg border border-gray-200 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 transition cursor-pointer"
-                            />
+                            <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} className="w-full bg-gray-50 p-2 rounded-lg border border-gray-200 cursor-pointer" />
                         </div>
+
+                        {/* Seller Specific Fields */}
+                        {formDataState.role === "SELLER" && (
+                            <>
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-sm font-semibold text-gray-700">Shop Name</label>
+                                    <input name="shopName" required onChange={handleChange} type="text" placeholder="Gadget Shop" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-sm font-semibold text-gray-700">Shop Slug</label>
+                                    <input name="shopSlug" required onChange={handleChange} type="text" placeholder="gadget-shop" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
+                                </div>
+                            </>
+                        )}
                     </div>
 
-                    {/* Join as Seller Checkbox */}
-                    <div className="flex items-center gap-3 p-4 bg-red-50 rounded-lg border border-red-100">
-                        <input 
-                            type="checkbox" 
-                            id="seller-join"
-                            className="w-5 h-5 accent-red-500 cursor-pointer"
-                        />
-                        <label htmlFor="seller-join" className="text-sm font-medium text-gray-800 cursor-pointer select-none">
-                            I want to join as a <span className="text-red-600 font-bold">Seller</span> and agree to the terms.
-                        </label>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-100">
-                        <button
-                            type="button"
-                            className="w-full sm:w-auto px-8 py-3 bg-gray-100 text-gray-600 font-semibold rounded-lg hover:bg-gray-200 transition active:scale-95"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="w-full sm:w-auto px-10 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-lg hover:bg-red-600 hover:shadow-red-200 transition active:scale-95"
-                        >
-                            Join Now
-                        </button>
-                    </div>
+                    <button type="submit" className="w-full py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition shadow-lg active:scale-95">
+                        Register Now
+                    </button>
                 </form>
             </div>
         </div>

@@ -1,3 +1,4 @@
+"use client"
 import BreadCumb from '../../common/BreadCumb/BreadCumb';
 
 const BillingDetails = () => {
@@ -11,7 +12,7 @@ const BillingDetails = () => {
                 <h1 className="text-3xl font-bold mb-10">Billing Details</h1>
                 
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-16'>
-                    {/* বাম পাশ: বিলিং ফর্ম */}
+                   
                     <div>
                         <form className='space-y-6'>
                             <div className="flex flex-col gap-2">
@@ -56,13 +57,13 @@ const BillingDetails = () => {
                         </form>
                     </div>
 
-                    {/* ডান পাশ: অর্ডার সামারি */}
+                    
                     <div className="lg:mt-8">
                         <div className="space-y-4 mb-8 text-lg">
-                            {/* প্রোডাক্ট লিস্ট (Example) */}
+                            
                             <div className='flex justify-between items-center'>
                                 <div className='flex items-center gap-4'>
-                                    <div className="w-12 h-12 bg-gray-200 rounded"></div> {/* Image Placeholder */}
+                                    <div className="w-12 h-12 bg-gray-200 rounded"></div> 
                                     <p>LCD Monitor</p>
                                 </div>
                                 <p>$650</p>
@@ -82,7 +83,7 @@ const BillingDetails = () => {
                             </div>
                         </div>
 
-                        {/* পেমেন্ট মেথড */}
+                     
                         <div className="space-y-4 mb-8">
                             <div className='flex justify-between items-center'>
                                 <div className="flex items-center gap-3">
@@ -90,7 +91,7 @@ const BillingDetails = () => {
                                     <label htmlFor="bank" className="cursor-pointer">Bank</label>
                                 </div>
                                 <div className="flex gap-2">
-                                    {/* এখানে ব্যাংকের লোগোগুলো বসবে */}
+                                   
                                     <span className="text-xs text-gray-400">Bkash/Visa/MasterCard</span>
                                 </div>
                             </div>
@@ -101,7 +102,7 @@ const BillingDetails = () => {
                             </div>
                         </div>
 
-                        {/* কুপন সেকশন */}
+                        
                         <div className='flex flex-col sm:flex-row gap-4 mb-6'>
                             <input 
                                 type="text" 

@@ -15,7 +15,7 @@ export const axiosBaseQuery =
             data?: AxiosRequestConfig['data']
             params?: AxiosRequestConfig['params']
             headers?: AxiosRequestConfig['headers']
-            meta: IMeta;
+            meta?: IMeta;
             contentType?: string;
         },
         unknown,
@@ -33,7 +33,10 @@ export const axiosBaseQuery =
                     },
                     withCredentials: true,
                 })
-                return { data: result.data }
+                return {
+                    data: result.data,
+                    meta: result.data?.meta
+                }
             } catch (axiosError) {
                 const err = axiosError as AxiosError
                 return {
