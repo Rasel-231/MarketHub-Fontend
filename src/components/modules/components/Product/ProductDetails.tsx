@@ -1,6 +1,6 @@
 import BreadCumb from "../../common/BreadCumb/BreadCumb";
 import MinHeader from "../../common/MinHeader/MinHeader";
-import ProductCard from "../TodaysProduct/ProductCard";
+import ProductCard from "../FlashSale/ProductCard";
 import Product from "./Product";
 
 const ProductDetails = () => {

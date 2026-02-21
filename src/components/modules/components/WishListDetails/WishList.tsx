@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ShoppingCart, Trash2 } from "lucide-react";
-import { Product } from "../TodaysProduct/Types";
+import { Product } from "../FlashSale/Types";
 
 const WishList = () => {
   const [products, setProducts] = useState<Product[]>([]);

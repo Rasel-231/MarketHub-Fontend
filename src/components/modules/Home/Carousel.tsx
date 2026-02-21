@@ -1,5 +1,5 @@
 "use client";
-import Image from 'next/image'; // Import the Next.js Image component
+import Image from 'next/image'; 
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
@@ -26,9 +26,9 @@ const HomeCarousel = () => {
             <Image 
               src={slide.src} 
               alt={slide.alt}
-              fill // Makes image fill the container
-              className="object-cover" // Ensures it doesn't stretch weirdly
-              priority={slide.id === 1} // Loads the first image immediately
+              fill 
+              className="object-cover" 
+              priority={slide.id === 1} 
             />
             <p className="legend">{slide.label}</p>
           </div>

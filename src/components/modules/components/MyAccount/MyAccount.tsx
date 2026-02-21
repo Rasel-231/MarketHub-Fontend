@@ -9,10 +9,9 @@ const MyAccount = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-red-500 mx-auto mb-4"></div>
+      
         <p className="text-gray-500 font-medium">Loading profile...</p>
-      </div>
+      
     );
   }
 

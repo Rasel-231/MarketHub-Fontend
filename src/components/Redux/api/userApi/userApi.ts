@@ -24,7 +24,16 @@ export const authApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: [tagtypes.user],
         }),
+        updateUser: build.mutation<IUserResponse, { id: string; data: FormData }>({
+            query: ({ id, data }) => ({
+                url: `${USER_URL}/${id}`,
+                method: "PATCH",
+                data: data,
+                contentType: "multipart/form-data",
+            }),
+            invalidatesTags: [tagtypes.user],
+        }),
     }),
 });
 
-export const { useCreateUserMutation, useGetMyProfileQuery } = authApi;
+export const { useCreateUserMutation, useGetMyProfileQuery, useUpdateUserMutation } = authApi;

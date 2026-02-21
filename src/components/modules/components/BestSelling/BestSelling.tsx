@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react";
 import MinHeader from "../../common/MinHeader/MinHeader";
 import BestSellingProduct from "./BestSellingProduct";
 
@@ -6,15 +7,16 @@ import BestSellingProduct from "./BestSellingProduct";
 
 
 const BestSelling = () => {
+    const [showAll,setShowAll]=useState(false)
     return (
-        <div className="mx-auto container  p-5 ">  
+        <div className="mx-auto container ">  
              <MinHeader title="This Month"/>
-            <section className="flex justify-between my-5">            
+            <section className="flex justify-between items-center my-5">            
                 <span className="text-2xl font-extrabold uppercase tracking-wider">Best Selling Products</span>
-                <button className="bg-red-500 p-1 px-2 mr-5 w-22  text-white">View all</button>
+                <button onClick={()=>setShowAll(!showAll)} className="bg-red-500  w-32 h-full p-2  text-white cursor-pointer">{showAll ? "View Less":"View all"}</button>
             </section>
             <section>
-                <BestSellingProduct/>
+                <BestSellingProduct showAll={showAll}/>
             </section>
         </div>
     );

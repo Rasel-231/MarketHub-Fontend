@@ -13,7 +13,7 @@ const AdminNavber = ({ onToggle, isOpen }: NavbarProps) => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           
-          {/* ১. বাম পাশ: শুধু লোগো থাকবে */}
+          
           <div className="flex items-center">
             <a href="#" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-sm"><Image src={Img} alt="images not loaded"/></div>
@@ -21,20 +21,20 @@ const AdminNavber = ({ onToggle, isOpen }: NavbarProps) => {
             </a>
           </div>
 
-          {/* ২. ডান পাশ: সার্চ এবং মেনু বাটন */}
+          
           <div className="flex items-center space-x-2 sm:space-x-4">
             
-            {/* সার্চ আইকন: মোবাইলে হাইড থাকবে (hidden md:flex) */}
+        
             <button className="hidden md:flex p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               <Search className="h-5 w-5" />
             </button>
 
-            {/* ডেক্সটপে সাবস্ক্রাইব বাটন (ঐচ্ছিক, চাইলে রাখতে পারেন) */}
+          
             <a href="#" className="hidden lg:block px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-sm transition-all">
               Subscribe
             </a>
 
-            {/* ৩. মেইন টগল বাটন: এটি একদম শেষে (End) থাকবে */}
+           
             <button
               onClick={onToggle}
               className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-all border border-transparent hover:border-gray-200 dark:hover:border-gray-700"

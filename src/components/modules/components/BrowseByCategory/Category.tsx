@@ -1,7 +1,6 @@
 'use client'
 import React, { useRef, useEffect, useCallback } from "react";
 
-// cn utility function (similar to clsx or classnames)
 function cn(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(' ');
 }
@@ -10,10 +9,9 @@ const useAnimationFrame = (callback: (time: number, delta: number) => void) => {
   const requestRef = useRef<number | null>(null);
   const previousTimeRef = useRef<number | null>(null);
   
-  // 1. Store the callback in a ref so the animate loop always has the latest logic
+
   const callbackRef = useRef(callback);
 
-  // 2. Update the callback ref safely after render
   useEffect(() => {
     callbackRef.current = callback;
   }, [callback]);
@@ -28,7 +26,6 @@ const useAnimationFrame = (callback: (time: number, delta: number) => void) => {
       requestRef.current = requestAnimationFrame(animate);
     };
 
-    // 3. Start the loop
     requestRef.current = requestAnimationFrame(animate);
     
     return () => {
@@ -36,7 +33,7 @@ const useAnimationFrame = (callback: (time: number, delta: number) => void) => {
         cancelAnimationFrame(requestRef.current);
       }
     };
-  }, []); // Empty deps: the loop runs once and uses callbackRef for updates
+  }, []); 
 };
 
 interface MarqueeProps extends React.ComponentPropsWithoutRef<"div"> {

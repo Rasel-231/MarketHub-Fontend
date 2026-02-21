@@ -6,7 +6,7 @@ import ExploreProducts from "@/components/modules/components/ExploreProducts/Exp
 import Featured from "@/components/modules/components/Featured/Featured";
 import ReactOrbit from "@/components/modules/components/ReactOrbit/ReactOrbit";
 import Services from "@/components/modules/components/Services/Services";
-import TodaysProduct from "@/components/modules/components/TodaysProduct/TodaysProduct";
+import TodaysProduct from "@/components/modules/components/FlashSale/TodaysProduct";
 import HomeCarousel from "@/components/modules/Home/Carousel";
 import HeroSection from "@/components/modules/Home/Hero";
 

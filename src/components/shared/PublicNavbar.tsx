@@ -12,37 +12,51 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { LogOutIcon, Menu, User2Icon } from "lucide-react";
+import { LogOutIcon, Menu, User2Icon, ShoppingCart, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGetMyProfileQuery } from "../Redux/api/userApi/userApi";
 import { useUserLogoutMutation } from "../Redux/api/authApi";
+import { useEffect, useState } from "react";
 
 const PublicNavbar = () => {
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { data: response, isLoading } = useGetMyProfileQuery();
   const [logout] = useUserLogoutMutation();
   const userData = response?.data;
+
   const handleLogout = async () => {
-    await logout();
-    window.location.href = "/login";
+    try {
+      await logout().unwrap();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const navItems = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
     { name: "Products", href: "/products" },
-    { name: "Services", href: "/services" },
+    { name: "Dashboard", href: "/dashboard" },
     { name: "Contact", href: "/contact" },
   ];
 
-  // Image path logic (Admin ba Seller thakle tar profilePhoto nibe)
   const userProfileImage =
     userData?.admin?.profilePhoto || userData?.seller?.profilePhoto;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-8">
+        
         {/* Logo Section */}
         <Link
           href="/"
@@ -60,7 +74,7 @@ const PublicNavbar = () => {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation Links */}
         <nav className="hidden md:block">
           <ul className="flex items-center gap-8">
             {navItems.map((item) => (
@@ -71,7 +85,7 @@ const PublicNavbar = () => {
                     "text-sm font-medium transition-colors hover:text-primary",
                     pathname === item.href
                       ? "text-primary"
-                      : "text-muted-foreground",
+                      : "text-muted-foreground"
                   )}
                 >
                   {item.name}
@@ -81,121 +95,151 @@ const PublicNavbar = () => {
           </ul>
         </nav>
 
-        {/* Desktop Actions (Login vs Profile) */}
-        <div className="hidden md:flex items-center gap-4">
-          {isLoading ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
-          ) : userData ? (
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-800">
-                  {userData.name}
-                </span>
-                <Link href="/account">
-                  {/* Profile Image Circle */}
-                  <div className="relative h-9 w-9 overflow-hidden rounded-full border border-primary/20 bg-muted shadow-sm">
-                    {userProfileImage ? (
-                      <Image
-                        src={userProfileImage}
-                        alt={userData.name}
-                        fill
-                        className="object-cover"
-                      />
+        {/* Right Side Icons & Profile */}
+        <div className="flex items-center gap-2 md:gap-4">
+          
+          {/* Wishlist & Cart (Common for Mobile & Desktop) */}
+          <div className="flex items-center gap-1 md:gap-2 mr-2">
+            <Link href={"/wishlist"}>
+            <Button variant="ghost" size="icon" className="rounded-full h-9 w-9">
+              <Heart className="h-5 w-5 text-muted-foreground" />
+            </Button>
+            </Link>
+            <Link href={"/cart"}>
+            <Button variant="ghost" size="icon" className="rounded-full h-9 w-9">
+              <ShoppingCart className="h-5 w-5 text-muted-foreground" />
+            </Button>
+            </Link>
+          </div>
+
+          {/* User Profile / Login (Desktop Only) */}
+          <div className="hidden md:flex items-center gap-4">
+            {isLoading ? (
+              <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+            ) : userData ? (
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-800">
+                    {userData.name}
+                  </span>
+                  <Link href="/account">
+                    <div className="relative h-9 w-9 overflow-hidden rounded-full border border-primary/20 bg-muted shadow-sm">
+                      {userProfileImage ? (
+                        <Image
+                          src={userProfileImage}
+                          alt={userData.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <User2Icon className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  title="Logout"
+                  className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-md hover:bg-destructive/10"
+                >
+                  <LogOutIcon className="h-5 w-5" />
+                </button>
+              </div>
+            ) : (
+              <Link href="/login">
+                <Button className="bg-primary hover:bg-primary/90">Login</Button>
+              </Link>
+            )}
+          </div>
+
+          {/* Mobile Menu */}
+          <div className="md:hidden flex items-center">
+            {mounted ? (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hover:bg-transparent h-9 w-9">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] sm:w-[350px] px-6">
+                  <SheetHeader className="text-left border-b pb-4 mb-4">
+                    <SheetTitle className="flex font-bold text-xl gap-2 items-center">
+                      <Image src={BrandImg} alt="Logo" width={28} height={28} className="object-contain" />
+                      <span>MarketHub</span>
+                    </SheetTitle>
+                  </SheetHeader>
+
+                  <nav className="flex flex-col gap-2 mt-4">
+                    {navItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          "text-base font-medium py-3 px-2 rounded-md transition-colors hover:bg-muted",
+                          pathname === item.href
+                            ? "text-primary bg-primary/5"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+
+                    <hr className="my-4 border-muted" />
+
+                    {userData ? (
+                      <div className="flex flex-col gap-6 mt-2">
+                        <Link
+                          href="/account"
+                          className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 hover:bg-muted transition-all"
+                        >
+                          <div className="h-12 w-12 relative overflow-hidden rounded-full border-2 border-background shadow-sm">
+                            {userProfileImage ? (
+                              <Image
+                                src={userProfileImage}
+                                alt="User"
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <User2Icon className="h-full w-full p-2 bg-secondary" />
+                            )}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-bold text-sm">{userData.name}</span>
+                            <span className="text-xs text-muted-foreground">View Profile</span>
+                          </div>
+                        </Link>
+
+                        <Button
+                          onClick={handleLogout}
+                          variant="outline"
+                          className="w-full justify-start text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          <LogOutIcon className="mr-2 h-4 w-4" /> Logout
+                        </Button>
+                      </div>
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <User2Icon className="h-5 w-5 text-muted-foreground" />
+                      <div className="pt-4">
+                        <Link href="/login" className="w-full">
+                          <Button className="w-full bg-primary hover:bg-primary/90 shadow-md">
+                            Login
+                          </Button>
+                        </Link>
                       </div>
                     )}
-                  </div>
-                </Link>
-              </div>
-
-              {/* Logout Button */}
-              <button
-              onClick={handleLogout}
-                title="Logout"
-                className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-md hover:bg-destructive/10"
-              >
-                <LogOutIcon className="h-5 w-5" />
-              </button>
-            </div>
-          ) : (
-            <Link href="/login">
-              <Button className="bg-primary hover:bg-primary/90">Login</Button>
-            </Link>
-          )}
-        </div>
-
-        {/* Mobile Menu */}
-        <div className="md:hidden flex items-center">
-          <Sheet>
-            <SheetTrigger asChild>
+                  </nav>
+                </SheetContent>
+              </Sheet>
+            ) : (
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
               </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px]">
-              <SheetHeader className="text-left mb-6">
-                <SheetTitle className="flex font-bold text-xl gap-2 items-center">
-                  <Image src={BrandImg} alt="Logo" width={24} height={24} />
-                  MarketHub
-                </SheetTitle>
-              </SheetHeader>
-
-              <nav className="flex flex-col gap-4">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "text-lg font-medium transition-colors hover:text-primary",
-                      pathname === item.href
-                        ? "text-primary"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-
-                <hr className="my-2" />
-
-                {/* Mobile Profile/Login */}
-                {userData ? (
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                      <Link href="/account">
-                        <div className="h-10 w-10 relative overflow-hidden rounded-full border">
-                          {userProfileImage ? (
-                            <Image
-                              src={userProfileImage}
-                              alt="User"
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <User2Icon className="h-10 w-10 p-2" />
-                          )}
-                        </div>
-                        <span className="font-bold">{userData.name}</span>
-                      </Link>
-                    </div>
-                    <Button
-                      onClick={handleLogout}
-                      variant="outline"
-                      className="w-full text-destructive border-destructive hover:bg-destructive/10"
-                    >
-                      <LogOutIcon className="mr-2 h-4 w-4" /> Logout
-                    </Button>
-                  </div>
-                ) : (
-                  <Link href="/login">
-                    <Button className="w-full bg-primary">Login</Button>
-                  </Link>
-                )}
-              </nav>
-            </SheetContent>
-          </Sheet>
+            )}
+          </div>
         </div>
       </div>
     </header>

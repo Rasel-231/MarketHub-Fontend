@@ -32,21 +32,20 @@ const RegisterForm = () => {
 
         const formData = new FormData();
 
-        // backend requirement: payload.body
+  
         formData.append("name", formDataState.name);
         formData.append("email", formDataState.email);
         formData.append("password", formDataState.password);
         formData.append("contactNumber", formDataState.contactNumber);
         formData.append("role", formDataState.role);
 
-        // Conditional fields for Seller
+
         if (formDataState.role === "SELLER") {
             if (formDataState.shopName) formData.append("shopName", formDataState.shopName);
             if (formDataState.shopSlug) formData.append("shopSlug", formDataState.shopSlug);
         }
 
-        // backend requirement: payload.file (key must match your multer config, usually 'profile_images' or 'file')
-        if (file) {
+          if (file) {
             formData.append("profile_images", file);
         }
 
@@ -68,31 +67,31 @@ const RegisterForm = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Name */}
+         
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-semibold text-gray-700">Full Name</label>
                             <input name="name" required onChange={handleChange} type="text" placeholder="Your Name" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
                         </div>
 
-                        {/* Email */}
+              
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-semibold text-gray-700">Email</label>
                             <input name="email" required onChange={handleChange} type="email" placeholder="email@example.com" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
                         </div>
 
-                        {/* Contact */}
+         
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-semibold text-gray-700">Contact Number</label>
                             <input name="contactNumber" required onChange={handleChange} type="text" placeholder="01XXXXXXXXX" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
                         </div>
 
-                        {/* Password */}
+                
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-semibold text-gray-700">Password</label>
                             <input name="password" required onChange={handleChange} type="password" placeholder="••••••••" className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition" />
                         </div>
 
-                        {/* Role Selection */}
+               
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-semibold text-gray-700">Join As</label>
                             <select name="role" value={formDataState.role} onChange={handleChange} className="w-full bg-gray-50 p-3 rounded-lg border border-gray-200 outline-none focus:border-red-500 transition">
@@ -102,13 +101,13 @@ const RegisterForm = () => {
                             </select>
                         </div>
 
-                        {/* Profile Photo */}
+                 
                         <div className="flex flex-col gap-1">
                             <label className="text-sm font-semibold text-gray-700">Profile Image</label>
                             <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} className="w-full bg-gray-50 p-2 rounded-lg border border-gray-200 cursor-pointer" />
                         </div>
 
-                        {/* Seller Specific Fields */}
+                    
                         {formDataState.role === "SELLER" && (
                             <>
                                 <div className="flex flex-col gap-1">

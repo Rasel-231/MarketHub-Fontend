@@ -2,9 +2,7 @@
 import { DollarSign, Locate, ReceiptIcon, ServerIcon, ShoppingCart, Truck } from "lucide-react";
 import React, { useState } from "react";
 import { EmailIcon, FacebookIcon } from "../../Auth/Login/Icons";
-; // Update the path if your icons file is in the parent directory
 
-// Wrapper for individual icons to give them the glassy container style and hover effects
 const IconWrapper = ({
   children,
   className = "",
@@ -39,7 +37,7 @@ const IconWrapper = ({
   </div>
 );
 
-// The grid of icons, now with a "spider net" connecting line system
+
 const IconGrid = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
@@ -53,17 +51,17 @@ const IconGrid = () => {
     { id: 7, component: <ServerIcon/> },
   ];
 
-  // Constants for layout calculation
+ 
   const radius = 160;
-  const centralIconRadius = 48; // w-24 is 96px, radius is 48px
-  const outerIconRadius = 32; // w-16 is 64px, radius is 32px
+  const centralIconRadius = 48; 
+  const outerIconRadius = 32; 
   const svgSize = 400;
   const svgCenter = svgSize / 2;
 
   return (
-    // Use scale to make the entire component responsive
+
     <div className="relative w-[400px] h-[400px] scale-75 md:scale-90 lg:scale-100">
-      {/* SVG container for all connecting lines, drawn underneath the icons */}
+     
       <svg width={svgSize} height={svgSize} className="absolute top-0 left-0">
         <defs>
           <filter id="glow">
@@ -75,7 +73,7 @@ const IconGrid = () => {
           </filter>
         </defs>
         <g>
-          {/* Draw lines between outer icons (the "web") */}
+         
           {outerIcons.map((icon, i) => {
             const nextIndex = (i + 1) % outerIcons.length;
             const nextIcon = outerIcons[nextIndex];
@@ -113,7 +111,7 @@ const IconGrid = () => {
             );
           })}
 
-          {/* Draw lines from center to outer icons (the "spokes") */}
+         
           {outerIcons.map((icon, i) => {
             const angleInDegrees = -90 + i * (360 / outerIcons.length);
             const angleInRadians = angleInDegrees * (Math.PI / 180);
@@ -146,9 +144,9 @@ const IconGrid = () => {
         </g>
       </svg>
 
-      {/* The main container that acts as the center for the circle */}
+  
       <div className="absolute top-1/2 left-1/2">
-        {/* Center Icon */}
+        
         <div className="absolute -translate-x-1/2 -translate-y-1/2 z-10">
           <IconWrapper
             className="w-24 h-24"
@@ -159,7 +157,7 @@ const IconGrid = () => {
           </IconWrapper>
         </div>
 
-        {/* Mapping over the outer icons to place them */}
+    
         {outerIcons.map((icon, i) => {
           const angleInDegrees = -90 + i * (360 / outerIcons.length);
           const angleInRadians = angleInDegrees * (Math.PI / 180);
@@ -180,7 +178,7 @@ const IconGrid = () => {
               onMouseLeave={() => setHoveredId(null)}
             >
               <div className="-translate-x-1/2 -translate-y-1/2 relative">
-                {/* Spotlight effect */}
+           
                 <div
                   className={`absolute inset-[-20px] bg-blue-500/20 dark:bg-blue-500/30 rounded-full blur-2xl transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}
                 ></div>
@@ -201,11 +199,10 @@ const IconGrid = () => {
   );
 };
 
-// The main App component that brings everything together
 export default function ReactOrbit() {
   return (
     <div className="w-full flex items-center justify-center font-sans p-4 sm:p-8 overflow-hidden">
-      {/* Style block to define the animations. */}
+   
       <style>
         {`
                 @keyframes float {
@@ -239,7 +236,7 @@ export default function ReactOrbit() {
             `}
       </style>
 
-      {/* Enhanced background with a radial gradient */}
+   
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.1),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
       </div>

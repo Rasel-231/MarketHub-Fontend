@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from 'framer-motion';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-// Bright colors for distinct products
+
 const COLORS = ["#6366f1", "#8b5cf6", "#a855f7", "#ec4899", "#f59e0b"];
 
 const SalesOverViewBarchart = () => {
@@ -19,7 +19,6 @@ const SalesOverViewBarchart = () => {
         fetch("products.json")
             .then(res => res.json())
             .then(data => {
-                // Protiti product er name ebong stock ke map kora hochche
                 interface Product {
                     name: string;
                     stock: number;
@@ -27,7 +26,7 @@ const SalesOverViewBarchart = () => {
 
                 const formattedData: FormattedDataItem[] = data.map((item: Product) => ({
                     name: item.name,
-                    value: item.stock // Ekhane 'price' ba 'stock' jekono kisu dewa jabe
+                    value: item.stock 
                 }));
                 setSalesData(formattedData);
             })

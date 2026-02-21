@@ -1,11 +1,12 @@
 "use client"
 import Link from "next/link";
-import { Home, User, Upload, DollarSign, MessageSquare, Truck } from "lucide-react";
+import { Home, User, Upload, DollarSign, MessageSquare, Truck, Layers } from "lucide-react";
 
 const AdminSidebar = ({ isOpen }: { isOpen: boolean }) => {
   const items = [
     { name: "Home", icon: <Home size={20}/>, path: "/" },
     { name: "Account", icon: <User size={20}/>, path: "/dashboard/account" },
+    { name: "Make Category", icon: <Layers size={20}/>, path: "/dashboard/categories" },
     { name: "Upload Products", icon: <Upload size={20}/>, path: "/dashboard/upload-products" },
     { name: "Total Revenue", icon: <DollarSign size={20}/>, path: "/dashboard/revenue" },
     { name: "Live Chat", icon: <MessageSquare size={20}/>, path: "/dashboard/live-chat" },

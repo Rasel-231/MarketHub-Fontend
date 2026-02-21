@@ -1,9 +1,11 @@
-import ProductDetails from '@/components/modules/components/Product/ProductDetails';
-import React from 'react';
+
+import ProductDetails from '@/components/modules/components/Product/Product';
+
 
 const page = () => {
     return (
         <div>
+           
         <ProductDetails/>
         </div>
     );

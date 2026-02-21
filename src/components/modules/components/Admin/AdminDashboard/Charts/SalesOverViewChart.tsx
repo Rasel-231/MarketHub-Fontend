@@ -31,7 +31,7 @@ const SalesOverViewChart = () => {
                             dataKey="name" 
                             stroke="#9ca3af" 
                             tick={{ fontSize: 10 }} 
-                            interval={0} // Shows all product names
+                            interval={0} 
                         />
                         <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} width={40} />
                         <Tooltip 
@@ -43,7 +43,7 @@ const SalesOverViewChart = () => {
                             }} 
                             itemStyle={{ color: "#e5e7eb" }} 
                         />
-                        {/* Changed dataKey to "price" to match your JSON */}
+                       
                         <Line 
                             type="monotone" 
                             dataKey="price" 

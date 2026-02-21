@@ -4,7 +4,7 @@ import Image from "next/image";
 import Img from "../../../../../public/Image/headphone.jpeg";
 
 const Banner = () => {
-    // Shared styling for the timer circles
+   
     const timerCircleStyle = "bg-white text-black rounded-full h-16 w-16 flex flex-col items-center justify-center text-xs font-bold leading-tight";
 
     return (

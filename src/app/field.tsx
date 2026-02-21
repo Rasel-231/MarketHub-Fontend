@@ -11,7 +11,6 @@ const FieldGroup = ({ className, ...props }: React.ComponentProps<"div">) => {
   )
 }
 
-// এখানে আমরা orientation প্রপসটি যোগ করছি
 interface FieldProps extends React.ComponentProps<"div"> {
   orientation?: "vertical" | "horizontal"
 }
@@ -22,7 +21,6 @@ const Field = ({ className, orientation = "vertical", ...props }: FieldProps) =>
       data-slot="field" 
       className={cn(
         "grid gap-2",
-        // যদি orientation horizontal হয়, তবে ফ্লেক্সবক্স ব্যবহার করবে
         orientation === "horizontal" && "flex items-center gap-4",
         className
       )} 

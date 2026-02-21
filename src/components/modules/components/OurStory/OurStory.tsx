@@ -30,7 +30,7 @@ const OurStory = () => {
         <BreadCumb />
       </div>
 
-      {/* Hero Section */}
+ 
       <section className="container mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-8 min-h-[50vh] px-4 md:px-10 py-10">
         <div className="flex flex-col gap-6">
           <h1 className="font-bold text-4xl md:text-5xl">Our Story</h1>
