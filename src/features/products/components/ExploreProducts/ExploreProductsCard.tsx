@@ -1,0 +1,119 @@
+"use client";
+
+import { IUserProducts, IUserProductsResponse } from "@/types/types";
+import { Heart } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { Rating } from "react-simple-star-rating";
+import CustomSpinner from "@/components/shared/CustomSpinner";
+import { useAddToCart } from "@/Utils/cartFuntionlaity";
+import { getRatingStats } from "@/Utils/calculatefuntion";
+import { useGetProductsQuery } from "@/store/api/productsApi/productsApi";
+
+
+const ExploreProductsCard = () => {
+  const { data, isLoading } = useGetProductsQuery(undefined);
+  const response = data as IUserProductsResponse;
+  const products: IUserProducts[] = response?.data?.data || [];
+  const [showAll, setShowAll] = useState(false);
+  const {handleAdd}=useAddToCart()
+
+  if (isLoading) return <div className="py-10 text-center font-bold"><CustomSpinner/></div>;
+  if (!products.length) return <div className="py-10 text-center">No Products Found!</div>;
+
+
+  const visibleProducts = showAll ? products : products.slice(0, 4);
+
+  return (
+    <div className="container mx-auto px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {visibleProducts.map((product) => {
+          const { averageRating, totalReviews } = getRatingStats(product?.review || []);
+
+          return (
+            <div
+              key={product.id}
+              className="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
+            >
+              <div className="relative h-64 w-full bg-gray-100 overflow-hidden">
+                <div className="absolute top-2 left-0 right-0 z-10 flex justify-between items-center px-2">
+                  <div className="relative flex items-center justify-center">
+                    {product.discountedRate > 0 && (
+                      <div className="w-16 h-7 bg-red-600 flex items-center justify-center text-white text-[10px] font-bold rounded-r-md">
+                        {`-${product.discountedRate}%`}
+                      </div>
+                    )}
+                  </div>
+
+                  <button className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
+                    <Heart size={18} />
+                  </button>
+                </div>
+
+                <Image
+                  src={product.images?.[0] || "/placeholder.jpg"}
+                  alt={product.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              <div className="p-4 space-y-2">
+                <h3 className="font-bold text-lg truncate">{product.title}</h3>
+
+                <div className="flex items-center justify-between ">
+                  <span className="flex gap-4 items-center">
+                    <span className="text-xl font-extrabold text-rose-500">
+                      ${product.sellingPrice}
+                    </span>
+                    {product.discountedRate > 0 && (
+                      <span className="text-gray-400 text-sm font-bold line-through">
+                        ${product.productActualPrice}
+                      </span>
+                    )}
+                  </span>
+
+                  <div className="flex flex-col items-end">
+                    <Rating
+                      initialValue={averageRating}
+                      readonly={true}
+                      size={16}
+                      allowFraction={true}
+                      SVGstyle={{ display: "inline" }}
+                    />
+                    <span className="text-[10px] font-semibold text-gray-400">
+                      ({totalReviews} reviews)
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-gray-500 text-sm line-clamp-2">
+                  {product.description}
+                </p>
+
+                <div className="flex items-center justify-between mt-4">
+                  <button onClick={() => handleAdd(product)} className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors w-full rounded-md">
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {products.length > 4 && (
+        <div className="flex justify-center items-center">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="my-8 bg-red-500 text-white py-2 px-8 rounded-md text-xs font-bold hover:bg-red-600 transition-colors"
+          >
+            {showAll ? "View Less Products" : "View All Products"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ExploreProductsCard;

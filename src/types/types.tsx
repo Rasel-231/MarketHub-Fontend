@@ -191,19 +191,22 @@ export interface IOrderItem {
 
 export interface IOrder {
   id: string;
+  orderId?: string;
   userId: string;
   items: IOrderItem[];
   totalAmount: number;
-  status: 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-  paymentStatus: 'PENDING' | 'COMPLETED' | 'FAILED';
+  status: 'PENDING' | 'DELIVERED' | 'CANCELLED';
+  paymentStatus: 'PAID' | 'FAILED' | 'UNPAID' | 'REFUNDED';
   transactionId?: string;
-  address?: string;
+  
+  deliveryAddress?: string;
   phone?: string;
   createdAt: string;
   updatedAt: string;
   payment?: {
     id: string;
     transactionId: string;
+    paymentMethod:string
     amount: number;
     paymentStatus: string;
   };
