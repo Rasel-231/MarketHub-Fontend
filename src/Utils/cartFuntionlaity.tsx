@@ -2,15 +2,17 @@
 
 
 import { useCreateCartsMutation, useDeleteCartsMutation, useUpdateCartsMutation } from "@/store/api/cartApi/cartApi";
-import {  ICart, IUserProducts } from "@/types/types";
+import { useDeleteWishlistMutation } from "@/store/api/wishlistApi/wishlistApi";
+import {  ICart, IErrorResponse, IUserProducts } from "@/types/types";
 import { toast } from "react-toastify";
 
 export const useAddToCart = () => {
   const [addToCart, { isLoading }] = useCreateCartsMutation();
   const [deleteCart]=useDeleteCartsMutation();
   const [updateCart] = useUpdateCartsMutation();
+  const [deleteWishlist]=useDeleteWishlistMutation();
 
-  const handleAdd = async (product: IUserProducts) => {
+  const handleAdd = async (product: IUserProducts,wishlistId?: string) => {
     if (!product?.id) {
       toast.error("Product not found!");
       return;
@@ -19,22 +21,28 @@ export const useAddToCart = () => {
     const cartData:ICart = {
       productId: product.id,
       quantity: 1,
-      sellingPrice: product.sellingPrice,
+      flashSalePrice: product.flashSalePrice,
     };
 
     try {
       await addToCart(cartData).unwrap();
       toast.success(`${product.title} added to cart!`);
-    } catch {
-      toast.error("Failed to add product");
+      if (wishlistId) {
+        await deleteWishlist(wishlistId).unwrap();
+      }
+    } catch(err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Failed to add product!");
+     }
+      
     }
-  };
   const handleDelete = async (productId: string) => {
     try {
       await deleteCart(productId).unwrap();
       toast.success("Item removed from cart");
-    } catch {
-      toast.error("Failed to remove item");
+    } catch(err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Failed to remove item");
     }
   };
 
@@ -47,8 +55,10 @@ export const useAddToCart = () => {
             id, 
             data: { quantity: newQty } 
         }).unwrap();
-    } catch {
-        toast.error("Update failed");
+    } catch(err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Update failed");
+      
     }
 };
 

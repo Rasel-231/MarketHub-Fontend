@@ -7,6 +7,7 @@ import { useState, FormEvent, ChangeEvent } from "react";
 import Image from "next/image";
 import CustomSpinner from "@/components/shared/CustomSpinner";
 import { useGetMyProfileQuery, useUpdateUserMutation } from "@/store/api/userApi/userApi";
+import { IErrorResponse } from "@/types/types";
 
 const Admin_My_Account = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -43,8 +44,9 @@ const Admin_My_Account = () => {
       }).unwrap();
 
       toast.success("User Updated Successfully");
-    } catch {
-      toast.error("User Update Failed");
+    } catch(err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "User Update Failed");
     }
   };
 

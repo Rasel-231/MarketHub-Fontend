@@ -5,10 +5,11 @@ import Img from "../../../../public/Image/Forgot password-amico.png";
 
 
 import { toast } from 'react-toastify';
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { EmailIcon, EyeIcon, EyeOffIcon, FacebookIcon, GoogleIcon, LockIcon, TwitterIcon, UserIcon } from "./Icons";
 import { useUserLoginMutation } from "@/store/api/authApi";
+import { IErrorResponse } from "@/types/types";
 
 
 
@@ -19,6 +20,8 @@ const Login4: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [loginUser] = useUserLoginMutation();
   const router = useRouter()
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get("redirect") || "/";
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -32,13 +35,13 @@ const Login4: React.FC = () => {
         position: "top-center",
         autoClose: 3000,
       });
-      router.push("/")
       
-     
-      }
+        router.push(redirectPath);
+    }
        
-    } catch {
-     toast.error("Login failed!", {
+    } catch(err) {
+      const error = err as IErrorResponse;
+     toast.error(error?.data?.message || "Login failed!", {
         position: "top-center",
         autoClose: 3000,
       });

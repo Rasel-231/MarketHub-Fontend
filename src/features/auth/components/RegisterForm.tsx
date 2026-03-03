@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useCreateUserMutation } from "@/store/api/userApi/userApi";
+import { IErrorResponse } from "@/types/types";
 
 
 const RegisterForm = () => {
@@ -56,8 +57,9 @@ const RegisterForm = () => {
                 toast.success("Registration successful!");
                 router.push("/");
             }
-        } catch  {
-            toast.error("Registration failed!");
+        } catch(err)  {
+            const error = err as IErrorResponse;
+            toast.error(error?.data?.message || "Registration failed!");
         }
     };
 

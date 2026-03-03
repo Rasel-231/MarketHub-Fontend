@@ -4,7 +4,7 @@ import { useGetCategoryQuery } from "@/store/api/categoryApi/categoryApi";
 import { useGetSingleProductsQuery, useUpdateProductMutation } from "@/store/api/productsApi/productsApi";
 import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
 
-import { ICategory, IUserProducts } from "@/types/types";
+import { ICategory, IErrorResponse, IUserProducts } from "@/types/types";
 import {
   DollarSign,
   ImageIcon,
@@ -88,8 +88,9 @@ const EditProducts = () => {
     try {
       const res = await updateProducts({ id, data: formData }).unwrap();
       if (res?.success) toast.success("Product Updated Successfully!");
-    } catch {
-      toast.error("Product update failed!");
+    } catch(err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Product update failed!");
     }
   };
 

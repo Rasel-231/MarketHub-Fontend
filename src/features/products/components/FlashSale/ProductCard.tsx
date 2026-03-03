@@ -1,41 +1,68 @@
 "use client";
 import Image from "next/image";
 import { Rating } from "react-simple-star-rating";
-import { Heart } from "lucide-react";
-
-import { IUserProductsResponse} from "@/types/types";
-import { getRatingStats } from "@/Utils/calculatefuntion";
+import { Eye, Heart } from "lucide-react";
 import { useState } from "react";
+
+import { IErrorResponse, IFlagResponse } from "@/types/types";
+import { getRatingStats } from "@/Utils/calculatefuntion";
 import { useAddToCart } from "@/Utils/cartFuntionlaity";
 import CustomSpinner from "@/components/shared/CustomSpinner";
-import { useGetProductsQuery } from "@/store/api/productsApi/productsApi";
-
-
+import { useAddWishlistMutation } from "@/store/api/wishlistApi/wishlistApi";
+import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
+import { toast } from "react-toastify";
+import Link from "next/link";
+import { useGetFlashSalesQuery } from "@/store/api/flagApi/flagApi";
 
 const ProductCard = () => {
+  const [showAll, setShowAll] = useState(false);
+  const { data: response, isLoading } = useGetFlashSalesQuery(undefined);
+  const { data: userData } = useGetMyProfileQuery(undefined);
+  const [addWishlist] = useAddWishlistMutation();
+  const { handleAdd } = useAddToCart();
 
-const [showAll,setShowAll]=useState(false)
-  const { data:response, isLoading } = useGetProductsQuery(undefined);
-   const products = (response as IUserProductsResponse)?.data?.data;
-   console.log("Products:",products);
-   const {handleAdd}=useAddToCart()
+  const rawRes = (response as IFlagResponse)?.data?.data;
+  const products = Array.isArray(rawRes) ? rawRes : [];
+  const userId = userData?.data?.id;
 
-  if (isLoading) return <div className="py-10 text-center font-bold"><CustomSpinner/></div>;
-  if (!products?.length) return <div className="py-10 text-center">No Products Found!</div>;
+  if (isLoading)
+    return (
+      <div className="py-10 text-center font-bold">
+        <CustomSpinner />
+      </div>
+    );
+  if (!products?.length)
+    return <div className="py-10 text-center">No Products Found!</div>;
+
+  const handleWishlist = async (productId: string) => {
+    if (!userId) {
+      toast.warning("Please log in to add items to your wishlist!");
+      return;
+    }
+    try {
+      await addWishlist({ productId, userId }).unwrap();
+      toast.success("Product added to wishlist!");
+    } catch (err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Failed to add to wishlist!");
+    }
+  };
 
   const visibleProducts = showAll ? products : products.slice(0, 4);
+
 
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {visibleProducts.map((product) => {
-
-          const { averageRating, totalReviews } = getRatingStats(product?.review || []);
+          const { averageRating, totalReviews } = getRatingStats(
+            product?.review || [],
+          );
 
           return (
             <div
               key={product.id}
-              className="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
+              className="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full"
             >
               <div className="relative h-64 w-full bg-gray-100 overflow-hidden">
                 <div className="absolute top-2 left-0 right-0 z-10 flex justify-between items-center px-2">
@@ -44,9 +71,19 @@ const [showAll,setShowAll]=useState(false)
                       {`-${product.discountedRate} %`}
                     </div>
                   )}
-                  <button className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
-                    <Heart size={18} />
-                  </button>
+                  <div>
+                    <button
+                      onClick={() => handleWishlist(product.id)}
+                      className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors"
+                    >
+                      <Heart size={18} />
+                    </button>
+                    <Link href={`/products/${product.id}`}>
+                      <button className="bg-white p-1.5 flex flex-col mt-2 rounded-full shadow-sm hover:text-red-500 transition-colors">
+                        <Eye size={18} />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
                 <Image
                   src={product.images?.[0] || "/placeholder.jpg"}
@@ -55,37 +92,47 @@ const [showAll,setShowAll]=useState(false)
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <div className="p-4 space-y-2">
+
+              <div className="p-4 space-y-2 flex flex-col flex-grow">
                 <h3 className="font-bold text-lg truncate">{product.title}</h3>
                 <div className="flex items-center justify-between">
-                  <span className="flex gap-4 items-center">
+                  <span className="flex gap-2 items-center">
                     <span className="text-xl font-extrabold text-rose-500">
-                      ${product.sellingPrice.toFixed()}
+                      $
+                      {product.flashSalePrice
+                        ? parseFloat(String(product.flashSalePrice)).toFixed(2)
+                        : product.productActualPrice.toFixed(2)}
                     </span>
                     {product.discountedRate > 0 && (
-                      <span className="text-gray-400 text-xl font-bold line-through">
-                        ${product.productActualPrice.toFixed()}
+                      <span className="text-gray-400 text-sm font-bold line-through">
+                        $
+                        {product.productActualPrice
+                          ? product.productActualPrice.toFixed(2)
+                          : "0.00"}
                       </span>
                     )}
                   </span>
-                  
-                  {/* Corrected Rating Section */}
                   <div className="flex flex-col items-end">
                     <Rating
                       initialValue={averageRating}
                       readonly={true}
-                      size={16}
+                      size={14}
                       allowFraction={true}
-                      SVGstyle={{ display: 'inline' }}
+                      SVGstyle={{ display: "inline" }}
                     />
                     <span className="text-[10px] font-semibold text-gray-400">
-                      ({totalReviews} reviews)
+                      ({totalReviews})
                     </span>
                   </div>
                 </div>
-                <p className="text-gray-500 text-sm line-clamp-2">{product.description}</p>
-                <div className="flex items-center justify-between mt-4">
-                  <button onClick={()=>handleAdd(product)} className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors w-full">
+                <p className="text-gray-500 text-sm line-clamp-2 flex-grow">
+                  {product.description}
+                </p>
+                <div className="mt-4">
+                  <button
+                    onClick={() => handleAdd(product)}
+                    className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors w-full rounded-md"
+                  >
                     Add to Cart
                   </button>
                 </div>
@@ -99,7 +146,7 @@ const [showAll,setShowAll]=useState(false)
         <div className="flex justify-center items-center">
           <button
             onClick={() => setShowAll(!showAll)}
-            className="w-xs my-5 bg-red-500 text-white p-2 px-6 rounded-none text-xs font-bold"
+            className="w-xs my-8 bg-red-500 text-white p-2 px-8 rounded-full text-xs font-bold hover:bg-red-600 transition-all"
           >
             {showAll ? "View less Products" : "View All Products"}
           </button>

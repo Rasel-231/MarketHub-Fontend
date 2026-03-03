@@ -4,35 +4,32 @@ import Link from "next/link";
 import BreadCumb from "@/components/shared/BreadCumb";
 import Image from "next/image";
 import { ICart } from "@/types/types";
-import { Trash2, Plus, Minus} from "lucide-react";
+import { Trash2, Plus, Minus } from "lucide-react";
 import { useAddToCart } from "@/Utils/cartFuntionlaity";
 import CustomSpinner from "@/components/shared/CustomSpinner";
-import { Table,
+import {
+  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow, } from "@/components/ui/table";
+  TableRow,
+} from "@/components/ui/table";
 import { useGetCartsQuery } from "@/store/api/cartApi/cartApi";
-
 
 const CartDetails = () => {
   const { data: cartResponse, isLoading } = useGetCartsQuery(undefined);
-  const {handleDelete,handleQuantity}=useAddToCart()
-
+  const { handleDelete, handleQuantity } = useAddToCart();
 
   const cartData = cartResponse?.data;
   const cartItems = cartData?.items || [];
   const totalAmount = cartData?.totalAmount || 0;
 
-
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
         <div>
-          
-          <CustomSpinner/>
+          <CustomSpinner />
         </div>
       </div>
     );
@@ -48,19 +45,32 @@ const CartDetails = () => {
         <Table>
           <TableHeader className="bg-gray-50">
             <TableRow className="border-b">
-              <TableHead className="w-[350px] py-5 px-6 text-black font-bold">Product</TableHead>
-              <TableHead className="text-black font-bold text-center">Price</TableHead>
-              <TableHead className="text-black font-bold text-center">Quantity</TableHead>
-              <TableHead className="text-black font-bold text-center">Subtotal</TableHead>
-              <TableHead className="text-right py-5 px-6 text-black font-bold">Action</TableHead>
+              <TableHead className="w-[350px] py-5 px-6 text-black font-bold">
+                Product
+              </TableHead>
+              <TableHead className="text-black font-bold text-center">
+                Price
+              </TableHead>
+              <TableHead className="text-black font-bold text-center">
+                Quantity
+              </TableHead>
+              <TableHead className="text-black font-bold text-center">
+                Subtotal
+              </TableHead>
+              <TableHead className="text-right py-5 px-6 text-black font-bold">
+                Action
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {cartItems.length > 0 ? (
               cartItems.map((item: ICart) => (
-                <TableRow key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                <TableRow
+                  key={item.id}
+                  className="hover:bg-gray-50/50 transition-colors"
+                >
                   <TableCell className="py-6 px-6">
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-4">
                       <div className="relative w-16 h-16 bg-gray-100 rounded overflow-hidden border flex-shrink-0">
                         {item.product?.images?.[0] ? (
                           <Image
@@ -75,28 +85,36 @@ const CartDetails = () => {
                           </div>
                         )}
                       </div>
-                      <span className="truncate max-w-[200px] font-semibold text-gray-800">
+
+                    
+                      <span className="font-semibold text-gray-800 text-sm text-center md:text-left md:max-w-[200px] mt-2 md:mt-0">
                         {item.product?.title || "Product Name"}
                       </span>
                     </div>
                   </TableCell>
-                  
+
                   <TableCell className="text-center text-gray-700 font-medium">
-                    ${item.sellingPrice.toFixed(2)}
+                    ${item.flashSalePrice}
                   </TableCell>
 
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-3 border rounded-md w-fit mx-auto px-2 py-1 bg-white">
-                      <button 
-                        onClick={() => handleQuantity(item.id!, item.quantity, 'dec')}
+                      <button
+                        onClick={() =>
+                          handleQuantity(item.id!, item.quantity, "dec")
+                        }
                         disabled={item.quantity <= 1}
                         className="p-1 hover:bg-gray-100 rounded-full disabled:opacity-30 transition-colors"
                       >
                         <Minus size={14} />
                       </button>
-                      <span className="w-6 text-center font-bold text-sm">{item.quantity}</span>
-                      <button 
-                        onClick={() => handleQuantity(item.id!, item.quantity, 'inc')}
+                      <span className="w-6 text-center font-bold text-sm">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() =>
+                          handleQuantity(item.id!, item.quantity, "inc")
+                        }
                         className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                       >
                         <Plus size={14} />
@@ -105,13 +123,12 @@ const CartDetails = () => {
                   </TableCell>
 
                   <TableCell className="text-center font-bold text-rose-600">
-                    ${(item.sellingPrice * item.quantity).toFixed(2)}
+                    ${((item.flashSalePrice)||0 * item.quantity).toFixed(2)}
                   </TableCell>
 
                   <TableCell className="text-right px-6">
-                    <button 
+                    <button
                       onClick={() => handleDelete(item.id!)}
-                     
                       className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all active:scale-90"
                       title="Remove Item"
                     >
@@ -122,10 +139,18 @@ const CartDetails = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-52 text-center text-gray-400 italic">
+                <TableCell
+                  colSpan={5}
+                  className="h-52 text-center text-gray-400 italic"
+                >
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-lg">Your cart is currently empty.</p>
-                    <Link href="/" className="text-red-500 font-bold hover:underline">Shop Now</Link>
+                    <Link
+                      href="/"
+                      className="text-red-500 font-bold hover:underline"
+                    >
+                      Shop Now
+                    </Link>
                   </div>
                 </TableCell>
               </TableRow>
@@ -144,11 +169,13 @@ const CartDetails = () => {
         </div>
 
         <div className="lg:col-span-5 border-2 border-black rounded-lg p-8 bg-white shadow-lg">
-          <h1 className="text-2xl font-black mb-8 border-b-2 border-gray-100 pb-4">Cart Total</h1>
+          <h1 className="text-2xl font-black mb-8 border-b-2 border-gray-100 pb-4">
+            Cart Total
+          </h1>
           <div className="space-y-5">
             <div className="flex justify-between pb-3 border-b border-dashed border-gray-200">
               <p className="text-gray-500 font-medium">Subtotal:</p>
-              <p className="font-bold text-lg">${totalAmount.toFixed(2)}</p>
+              <p className="font-bold text-lg">${(totalAmount||0).toFixed(2)}</p>
             </div>
             <div className="flex justify-between pb-3 border-b border-dashed border-gray-200">
               <p className="text-gray-500 font-medium">Shipping:</p>
@@ -156,7 +183,7 @@ const CartDetails = () => {
             </div>
             <div className="flex justify-between pt-4 text-2xl font-black text-rose-600">
               <p>Total:</p>
-              <p>${totalAmount.toFixed(2)}</p>
+              <p>${(totalAmount ||0).toFixed(2)}</p>
             </div>
           </div>
           <Link href="/billing" className="w-full block mt-10">

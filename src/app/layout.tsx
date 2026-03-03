@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import Providers from "@/store/reduxSetup/Provider";
 
 const geistSans = Geist({
@@ -40,8 +40,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${nunitoSans.variable} ${geistMono.variable} antialiased`}
       >
         <div>
-          <Providers>{children}
-            <ToastContainer />
+          <Providers>
+            {children}
+            <ToastContainer position="top-center" autoClose={3000} />
           </Providers>
         </div>
       </body>

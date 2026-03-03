@@ -19,7 +19,9 @@ import { useEffect, useState } from "react";
 import { useUserLogoutMutation } from "@/store/api/authApi";
 import { useGetCartsQuery } from "@/store/api/cartApi/cartApi";
 import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
-
+import { IErrorResponse, IWishlist } from "@/types/types";
+import { toast } from "react-toastify";
+import { useGetWishlistQuery } from "@/store/api/wishlistApi/wishlistApi";
 
 const PublicNavbar = () => {
   const [mounted, setMounted] = useState(false);
@@ -37,20 +39,25 @@ const PublicNavbar = () => {
   const userData = response?.data;
   const { data: cartResponse } = useGetCartsQuery(undefined);
   const cartItemCount = cartResponse?.data?.items?.length || 0;
+  const { data: wishlistResponse } = useGetWishlistQuery("");
+
+  const wishlistItemCount =
+    (wishlistResponse?.data as IWishlist[])?.length || 0;
 
   const handleLogout = async () => {
     try {
       await logout().unwrap();
       window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout failed:", error);
+    } catch (err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Logout failed!");
     }
   };
 
   const navItems = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
-    { name: "Products", href: "/products" },
+    { name: "Shop", href: "/shop" },
     { name: "Dashboard", href: "/dashboard" },
     { name: "Contact", href: "/contact" },
   ];
@@ -103,9 +110,14 @@ const PublicNavbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full h-9 w-9"
+                className="rounded-full h-9 w-9 relative"
               >
                 <Heart className="h-5 w-5 text-muted-foreground" />
+                {mounted && wishlistItemCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-background">
+                    {wishlistItemCount}
+                  </span>
+                )}
               </Button>
             </Link>
             <Link href={"/cart"}>

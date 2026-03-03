@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import { useCreateContactMessageMutation } from "@/store/api/contactMessageApi/messageApi";
 import { EmailIcon } from "@/features/auth/components/Icons";
+import { IErrorResponse } from "@/types/types";
 
 const ContactChild = () => {
   const [name, setName] = useState("");
@@ -36,8 +37,9 @@ const ContactChild = () => {
         setMessage("");
         setContactNumber("");
       }
-    } catch {
-      toast.error("Message Sending failed!", {
+    } catch(err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Message Sending failed!", {
         position: "top-center",
         autoClose: 3000,
       });

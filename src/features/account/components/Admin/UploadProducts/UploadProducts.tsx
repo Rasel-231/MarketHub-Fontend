@@ -4,7 +4,7 @@ import { useGetCategoryQuery } from "@/store/api/categoryApi/categoryApi";
 import { useCreateProductMutation } from "@/store/api/productsApi/productsApi";
 import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
 
-import { ICategory } from "@/types/types";
+import { ICategory, IErrorResponse } from "@/types/types";
 import {
   DollarSign,
   ImageIcon,
@@ -87,8 +87,9 @@ const UploadProducts = () => {
         setSelectedColours([]);
         setProduct_Images(null);
       }
-    } catch  {
-      toast.error("Product Upload failed!");
+    } catch(err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Product Upload failed!");
     }
   };
 

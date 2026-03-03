@@ -64,25 +64,38 @@ export enum ProductStatus {
 export interface IProps {
   showAll: boolean;
 }
+export interface IReviewUser {
+  name: string;
+  seller?: {
+    profilePhoto?: string;
+  };
+}
 
 export interface IReview {
   id: string;
   rating: number;
-  comment: string;
-  userId: string;
   productId: string;
-  createdAt: string | Date;
-  updatedAt: string | Date;
+  comment: string;
+  user: IReviewUser;
+  createdAt: string;
+}
+export interface IReviewResponse {
+  success: boolean;
+  message: string;
+  data: IReview[];
 }
 export interface IUserProducts {
   id: string;
   title: string;
   description: string;
   stock: number;
-  rating:number
+  rating: number;
+  model?: string;
+  discountAmount: number;
+  sellingPrice: number;
   shopName?: string;
   size: string[];
-  sellingPrice: number;
+  flashSalePrice: number;
   discountedRate: number;
   productActualPrice: number;
   colour: string[];
@@ -113,7 +126,7 @@ export interface IUserProductsResponse {
   statusCode: number;
   message: string;
   data: {
-    meta: IMeta;
+    meta: string;
     data: IUserProducts[];
   };
 }
@@ -157,7 +170,7 @@ export interface ICart {
   cartId?: string;
   productId: string;
   quantity: number;
-  sellingPrice: number;
+  flashSalePrice: number;
   product?: {
     id: string;
     title: string;
@@ -170,11 +183,16 @@ export interface ICartResponse {
   statusCode: number;
   message: string;
   data: {
-    items: ICart[]; 
+    items: ICart[];
     totalAmount: number;
   };
 }
-
+export interface IReviewResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: IReview[];
+}
 
 export interface IOrderItem {
   id: string;
@@ -195,10 +213,10 @@ export interface IOrder {
   userId: string;
   items: IOrderItem[];
   totalAmount: number;
-  status: 'PENDING' | 'DELIVERED' | 'CANCELLED';
-  paymentStatus: 'PAID' | 'FAILED' | 'UNPAID' | 'REFUNDED';
+  status: "PENDING" | "DELIVERED" | "CANCELLED";
+  paymentStatus: "PAID" | "FAILED" | "UNPAID" | "REFUNDED";
   transactionId?: string;
-  
+
   deliveryAddress?: string;
   phone?: string;
   createdAt: string;
@@ -206,7 +224,7 @@ export interface IOrder {
   payment?: {
     id: string;
     transactionId: string;
-    paymentMethod:string
+    paymentMethod: string;
     amount: number;
     paymentStatus: string;
   };
@@ -216,11 +234,18 @@ export interface IOrderResponse {
   success: boolean;
   statusCode: number;
   message: string;
-  data: IOrder | IOrder[]; 
+  data: IOrder | IOrder[];
 }
 
-
-export interface OrderFormData  {
+export interface IFlagResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    data: IUserProducts[];
+  };
+}
+export interface OrderFormData {
   name: string;
   companyName?: string;
   address: string;
@@ -230,4 +255,29 @@ export interface OrderFormData  {
   email: string;
   paymentMethod: string;
   saveInfo: boolean;
-};
+}
+
+export interface IWishlist {
+  id: string;
+  userId: string;
+  productId: string;
+  createdAt: string;
+  updatedAt: string;
+  products?: IUserProducts;
+}
+
+export interface IWishlistResponse {
+  success: boolean;
+  message: string;
+  data: IWishlist | IWishlist[];
+}
+
+export interface IErrorResponse {
+  status: number;
+  data: {
+    success: boolean;
+    message: string;
+    errorSources?: { path: string; message: string }[];
+    stack?: string;
+  };
+}

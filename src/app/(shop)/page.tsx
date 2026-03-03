@@ -3,9 +3,9 @@ import Banner from "@/features/home/components/Banner";
 import HomeCarousel from "@/features/home/components/Carousel";
 import HeroSection from "@/features/home/components/Hero";
 import ReactOrbit from "@/features/home/components/ReactOrbit";
-import BestSellingProduct from "@/features/products/components/BestSelling/BestSellingProduct";
+import BestSelling from "@/features/products/components/BestSelling/BestSelling";
 import BrowseByCategory from "@/features/products/components/BrowseByCategory/BrowseByCategory";
-import ExploreProductsCard from "@/features/products/components/ExploreProducts/ExploreProductsCard";
+import ExploreProducts from "@/features/products/components/ExploreProducts/ExploreProducts";
 import Featured from "@/features/products/components/Featured/Featured";
 import TodaysProduct from "@/features/products/components/FlashSale/TodaysProduct";
 
@@ -16,9 +16,9 @@ export default function ProductHomePages() {
       <HomeCarousel />
       <TodaysProduct />
       <BrowseByCategory />
-      <BestSellingProduct showAll={false} />
+      <BestSelling/>
       <Banner />
-      <ExploreProductsCard />
+      <ExploreProducts/>
       <Featured />
       <ReactOrbit />
       <Services />

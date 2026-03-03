@@ -5,7 +5,7 @@ import BreadCumb from "@/components/shared/BreadCumb";
 import { toast } from "react-toastify";
 
 import { ShoppingCart, Loader2 } from "lucide-react";
-import { ICart, IOrder, OrderFormData } from "@/types/types";
+import { ICart, IErrorResponse, IOrder, OrderFormData } from "@/types/types";
 
 import { useRouter } from "next/navigation";
 import CustomSpinner from "@/components/shared/CustomSpinner";
@@ -92,8 +92,9 @@ const BillingDetails = () => {
           router.push(`/order/order-status/${id}`);
         }
       }
-    } catch {
-      toast.error("Order placement failed.");
+    } catch(err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Order placement failed.");
     }
   };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { IUserProducts, IUserProductsResponse } from "@/types/types";
-import { Heart } from "lucide-react";
+import { Eye, Heart } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Rating } from "react-simple-star-rating";
@@ -9,18 +9,23 @@ import CustomSpinner from "@/components/shared/CustomSpinner";
 import { useAddToCart } from "@/Utils/cartFuntionlaity";
 import { getRatingStats } from "@/Utils/calculatefuntion";
 import { useGetProductsQuery } from "@/store/api/productsApi/productsApi";
-
+import Link from "next/link";
 
 const ExploreProductsCard = () => {
   const { data, isLoading } = useGetProductsQuery(undefined);
   const response = data as IUserProductsResponse;
   const products: IUserProducts[] = response?.data?.data || [];
   const [showAll, setShowAll] = useState(false);
-  const {handleAdd}=useAddToCart()
+  const { handleAdd } = useAddToCart();
 
-  if (isLoading) return <div className="py-10 text-center font-bold"><CustomSpinner/></div>;
-  if (!products.length) return <div className="py-10 text-center">No Products Found!</div>;
-
+  if (isLoading)
+    return (
+      <div className="py-10 text-center font-bold">
+        <CustomSpinner />
+      </div>
+    );
+  if (!products.length)
+    return <div className="py-10 text-center">No Products Found!</div>;
 
   const visibleProducts = showAll ? products : products.slice(0, 4);
 
@@ -28,7 +33,9 @@ const ExploreProductsCard = () => {
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {visibleProducts.map((product) => {
-          const { averageRating, totalReviews } = getRatingStats(product?.review || []);
+          const { averageRating, totalReviews } = getRatingStats(
+            product?.review || [],
+          );
 
           return (
             <div
@@ -45,9 +52,16 @@ const ExploreProductsCard = () => {
                     )}
                   </div>
 
-                  <button className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
-                    <Heart size={18} />
-                  </button>
+                  <div>
+                    <button className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
+                      <Heart size={18} />
+                    </button>
+                    <Link href={"/products"}>
+                      <button className="bg-white p-1.5 flex flex-col mt-2 rounded-full shadow-sm hover:text-red-500 transition-colors">
+                        <Eye size={18} />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
 
                 <Image
@@ -92,7 +106,10 @@ const ExploreProductsCard = () => {
                 </p>
 
                 <div className="flex items-center justify-between mt-4">
-                  <button onClick={() => handleAdd(product)} className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors w-full rounded-md">
+                  <button
+                    onClick={() => handleAdd(product)}
+                    className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors w-full rounded-md"
+                  >
                     Add to Cart
                   </button>
                 </div>

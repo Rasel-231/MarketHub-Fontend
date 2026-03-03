@@ -1,8 +1,10 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { PlusCircle, LayoutGrid, Loader2 } from "lucide-react"; 
-import { useCreateCategoryMutation } from "@/componentsss/Redux/api/categoryApi/categoryApi";
+
 import { toast } from "react-toastify";
+import { useCreateCategoryMutation } from "@/store/api/categoryApi/categoryApi";
+import { IErrorResponse } from "@/types/types";
 
 type TCategoryForm = {
   name: string;
@@ -25,10 +27,9 @@ export default function Category() {
       
       toast.success("Category Created Successfully!");
       reset(); 
-    } catch {
-      
-      const errMsg = "Making Category failed";
-      toast.error(errMsg);
+    } catch(err) {
+      const error = err as IErrorResponse;
+      toast.error(error?.data?.message || "Failed to create category!");
     }
   };
 

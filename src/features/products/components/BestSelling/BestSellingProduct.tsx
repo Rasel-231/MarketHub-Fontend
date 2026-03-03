@@ -1,25 +1,29 @@
 "use client";
 import Image from "next/image";
 import { Rating } from "react-simple-star-rating";
-import { Heart } from "lucide-react";
-
-
+import { Eye, Heart } from "lucide-react";
 
 import CustomSpinner from "@/components/shared/CustomSpinner";
 import { useAddToCart } from "@/Utils/cartFuntionlaity";
 import { getRatingStats } from "@/Utils/calculatefuntion";
-import { IProps, IUserProductsResponse } from "@/types/types";
-import { useGetProductsQuery } from "@/store/api/productsApi/productsApi";
-
-
+import { IFlagResponse, IProps } from "@/types/types";
+import Link from "next/link";
+import { useGetBestSellingQuery } from "@/store/api/flagApi/flagApi";
 
 const BestSellingProduct = ({ showAll }: IProps) => {
-  const { data:response, isLoading } = useGetProductsQuery(undefined);
-   const products = (response as IUserProductsResponse)?.data?.data;
-   const {handleAdd}=useAddToCart()
+  const { data: response, isLoading } = useGetBestSellingQuery(undefined);
+  const rawData = (response as IFlagResponse)?.data?.data;
+  const products = Array.isArray(rawData) ? rawData : [];
+  const { handleAdd } = useAddToCart();
 
-  if (isLoading) return <div className="py-10 text-center font-bold"><CustomSpinner/></div>;
-  if (!products?.length) return <div className="py-10 text-center">No Products Found!</div>;
+  if (isLoading)
+    return (
+      <div className="py-10 text-center font-bold">
+        <CustomSpinner />
+      </div>
+    );
+  if (!products?.length)
+    return <div className="py-10 text-center">No Products Found!</div>;
 
   const visibleProducts = showAll ? products : products.slice(0, 4);
 
@@ -27,8 +31,9 @@ const BestSellingProduct = ({ showAll }: IProps) => {
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {visibleProducts.map((product) => {
-
-          const { averageRating, totalReviews } = getRatingStats(product?.review || []);
+          const { averageRating, totalReviews } = getRatingStats(
+            product?.review || []
+          );
 
           return (
             <div
@@ -42,9 +47,16 @@ const BestSellingProduct = ({ showAll }: IProps) => {
                       {`-${product.discountedRate} %`}
                     </div>
                   )}
-                  <button className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
-                    <Heart size={18} />
-                  </button>
+                  <div>
+                    <button className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
+                      <Heart size={18} />
+                    </button>
+                    <Link href={`product/${product.id}`}>
+                      <button className="bg-white p-1.5 flex flex-col mt-2 rounded-full shadow-sm hover:text-red-500 transition-colors">
+                        <Eye size={18} />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
                 <Image
                   src={product.images?.[0] || "/placeholder.jpg"}
@@ -57,33 +69,44 @@ const BestSellingProduct = ({ showAll }: IProps) => {
                 <h3 className="font-bold text-lg truncate">{product.title}</h3>
                 <div className="flex items-center justify-between">
                   <span className="flex gap-4 items-center">
-                    <span className="text-xl font-extrabold text-rose-500">
-                      ${product.sellingPrice.toFixed()}
+                     <span className="text-xl font-extrabold text-rose-500">
+                      $
+                      {product.flashSalePrice
+                        ? parseFloat(String(product.flashSalePrice)).toFixed(2)
+                        : product.productActualPrice.toFixed(2)}
                     </span>
                     {product.discountedRate > 0 && (
                       <span className="text-gray-400 text-xl font-bold line-through">
-                        ${product.productActualPrice.toFixed()}
+                      
+                        $
+                        {product.productActualPrice
+                          ? product.productActualPrice.toFixed(2)
+                          : "0.00"}
                       </span>
                     )}
                   </span>
-                  
-                 
+
                   <div className="flex flex-col items-end">
                     <Rating
                       initialValue={averageRating}
                       readonly={true}
                       size={16}
                       allowFraction={true}
-                      SVGstyle={{ display: 'inline' }}
+                      SVGstyle={{ display: "inline" }}
                     />
                     <span className="text-[10px] font-semibold text-gray-400">
                       ({totalReviews} reviews)
                     </span>
                   </div>
                 </div>
-                <p className="text-gray-500 text-sm line-clamp-2">{product.description}</p>
+                <p className="text-gray-500 text-sm line-clamp-2">
+                  {product.description}
+                </p>
                 <div className="flex items-center justify-between mt-4">
-                  <button onClick={() => handleAdd(product)} className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors w-full">
+                  <button
+                    onClick={() => handleAdd(product)}
+                    className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors w-full"
+                  >
                     Add to Cart
                   </button>
                 </div>
@@ -92,8 +115,6 @@ const BestSellingProduct = ({ showAll }: IProps) => {
           );
         })}
       </div>
-
-    
     </div>
   );
 };
