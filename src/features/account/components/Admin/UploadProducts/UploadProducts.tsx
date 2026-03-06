@@ -1,10 +1,9 @@
 "use client";
 import CustomSpinner from "@/components/shared/CustomSpinner";
-import { useGetCategoryQuery } from "@/store/api/categoryApi/categoryApi";
+import { useGetCategoryQuery, useGetattributeQuery } from "@/store/api/categoryApi/categoryApi";
 import { useCreateProductMutation } from "@/store/api/productsApi/productsApi";
 import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
-
-import { ICategory, IErrorResponse } from "@/types/types";
+import { ICategory, IErrorResponse, IAttribute } from "@/types/types";
 import {
   DollarSign,
   ImageIcon,
@@ -12,42 +11,72 @@ import {
   Layers,
   Package,
   PlusCircle,
+  X,
+  Plus
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
 const UploadProducts = () => {
+  const [category, setCategory] = useState("");
   const { data: categoriesResponse, isLoading: isCategoriesLoading } = useGetCategoryQuery();
+  
+  const { data: attrResponse, isFetching: isAttrLoading } = useGetattributeQuery(category, {
+    skip: !category,
+    refetchOnMountOrArgChange: true,
+  });
+
   const [createProducts] = useCreateProductMutation();
   const { data: profileResponse, isLoading: isProfileLoading } = useGetMyProfileQuery();
 
   const categories = categoriesResponse?.data?.data || [];
+  const dynamicAttributes: IAttribute[] = (category && attrResponse?.success && Array.isArray(attrResponse?.data)) 
+    ? attrResponse.data 
+    : [];
 
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
-  const [sellingPrice, setSellingPrice] = useState("");
   const [productActualPrice, setproductActualPrice] = useState("");
   const [discountedRate, setDiscountedRate] = useState("");
-  const [category, setCategory] = useState("");
   const [shopName, setShopName] = useState("");
   const [status, setStatus] = useState("AVAILABLE");
   const [product_images, setProduct_Images] = useState<File | null>(null);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const [selectedColours, setSelectedColours] = useState<string[]>([]);
+
+  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string[]>>({});
+  const [tempInput, setTempInput] = useState<Record<string, string>>({});
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    setCategory(selectedId);
+    setSelectedAttributes({});
+    setTempInput({});
+  };
+
+  const handleAttrAdd = (label: string) => {
+    const value = tempInput[label]?.trim();
+    if (!value) return;
+    setSelectedAttributes((prev) => ({
+      ...prev,
+      [label]: [...(prev[label] || []), value],
+    }));
+    setTempInput((prev) => ({ ...prev, [label]: "" }));
+  };
+
+  const removeAttrValue = (label: string, value: string) => {
+    setSelectedAttributes((prev) => ({
+      ...prev,
+      [label]: prev[label].filter((v) => v !== value),
+    }));
+  };
 
   const handleUploadProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const actualUserId = profileResponse?.data?.id;
     const actualSellerId = profileResponse?.data?.seller?.id;
 
-    if (!actualUserId || !actualSellerId) {
-      return toast.error("Seller profile not detected. Please wait for profile to load.");
-    }
-    if (!product_images) {
-      return toast.warning("Please upload a product image.");
-    }
+    if (!actualUserId || !actualSellerId) return toast.error("Seller profile not detected.");
+    if (!product_images) return toast.warning("Please upload a product image.");
 
     const formData = new FormData();
     const productData = {
@@ -55,15 +84,13 @@ const UploadProducts = () => {
       brand,
       shopName,
       description,
-      sellingPrice: Number(sellingPrice) || 0,
-      productActualPrice: Number(productActualPrice) || 0, 
+      productActualPrice: Number(productActualPrice) || 0,
       discountedRate: Number(discountedRate) || 0,
-      stock: 10, 
+      stock: 1,
       categoryId: category,
-      size: selectedSizes,
-      colour: selectedColours,
-      status: status,
-      sellerId: actualSellerId, 
+      attributes: selectedAttributes,
+      status,
+      sellerId: actualSellerId,
       userId: actualUserId,
     };
 
@@ -72,29 +99,19 @@ const UploadProducts = () => {
 
     try {
       const res = await createProducts(formData).unwrap();
-
       if (res?.success) {
         toast.success("Product Published Successfully!");
-        setTitle("");
-        setBrand("");
-        setShopName("");
-        setDescription("");
-        setSellingPrice("");
-        setproductActualPrice("");
-        setDiscountedRate("");
-        setCategory("");
-        setSelectedSizes([]);
-        setSelectedColours([]);
-        setProduct_Images(null);
+        setTitle(""); setBrand(""); setShopName(""); setDescription("");
+        setproductActualPrice(""); setDiscountedRate("");
+        setCategory(""); setSelectedAttributes({}); setProduct_Images(null);
       }
-    } catch(err) {
+    } catch (err) {
       const error = err as IErrorResponse;
-      toast.error(error?.data?.message || "Product Upload failed!");
+      toast.error(error?.data?.message || "Upload failed!");
     }
   };
 
-  if (isProfileLoading)
-    return <div className="text-center py-20 font-bold"><CustomSpinner/></div>;
+  if (isProfileLoading) return <div className="text-center py-20 font-bold"><CustomSpinner /></div>;
 
   return (
     <div className="max-w-5xl mx-auto my-10 px-4">
@@ -112,28 +129,9 @@ const UploadProducts = () => {
               <Package size={18} className="text-emerald-600" /> Basic Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                type="text"
-                placeholder="Product Name"
-                className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800"
-                required
-              />
-              <input
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                type="text"
-                placeholder="Brand Name"
-                className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800"
-              />
-              <input
-                value={shopName}
-                onChange={(e) => setShopName(e.target.value)}
-                type="text"
-                placeholder="Shop Name"
-                className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800"
-              />
+              <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" placeholder="Product Name" className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800" required />
+              <input value={brand} onChange={(e) => setBrand(e.target.value)} type="text" placeholder="Brand Name" className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800" />
+              <input value={shopName} onChange={(e) => setShopName(e.target.value)} type="text" placeholder="Shop Name" className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800" />
             </div>
           </div>
 
@@ -141,123 +139,94 @@ const UploadProducts = () => {
             <h3 className="flex items-center gap-2 font-bold text-gray-800 dark:text-gray-200 border-b pb-2">
               <DollarSign size={18} className="text-emerald-600" /> Pricing & Inventory
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-              <input
-                value={productActualPrice}
-                onChange={(e) => setproductActualPrice(e.target.value)}
-                type="number"
-                placeholder="Discount Price"
-                className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800"
-              />
-              <input
-                value={discountedRate}
-                onChange={(e) => setDiscountedRate(e.target.value)}
-                type="number"
-                placeholder="Discount %"
-                className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+      
+              <input value={productActualPrice} onChange={(e) => setproductActualPrice(e.target.value)} type="number" placeholder="Actual Price" className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800" required />
+              <input value={discountedRate} onChange={(e) => setDiscountedRate(e.target.value)} type="number" placeholder="Discount %" className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800" />
             </div>
           </div>
 
           <div className="space-y-6">
             <h3 className="flex items-center gap-2 font-bold text-gray-800 dark:text-gray-200 border-b pb-2">
-              <Layers size={18} className="text-emerald-600" /> Attributes
+              <Layers size={18} className="text-emerald-600" /> Category & Attributes
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer"
+              <select 
+                value={category} 
+                onChange={handleCategoryChange} 
+                className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800" 
                 required
               >
-                <option value="">
-                  {isCategoriesLoading ? "Loading..." : "Select Category"}
-                </option>
-                {categories.map((cat: ICategory) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
+                <option value="">{isCategoriesLoading ? "Loading..." : "Select Category"}</option>
+                {categories.map((cat: ICategory) => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
               </select>
 
-              <select
-                value={selectedColours[0] || ""}
-                onChange={(e) => setSelectedColours([e.target.value])}
-                className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800"
-              >
-                <option value="">Select Color</option>
-                <option value="red">Red</option>
-                <option value="blue">Blue</option>
-                <option value="green">Green</option>
-                <option value="yellow">Yellow</option>
-                <option value="cyan">Cyan</option>
-              </select>
+              <div>
+                <input type="text-area" className="description"/>
+              </div>
 
-              <div className="flex gap-2 items-center px-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-dashed">
-                {["sm", "m", "xl", "xxl"].map((size) => (
-                  <label key={size} className="flex items-center gap-1 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedSizes.includes(size)}
-                      onChange={(e) => {
-                        if (e.target.checked) setSelectedSizes([...selectedSizes, size]);
-                        else setSelectedSizes(selectedSizes.filter((s) => s !== size));
-                      }}
-                      className="w-4 h-4 rounded text-emerald-600"
-                    />
-                    <span className="text-xs font-bold uppercase">{size}</span>
-                  </label>
-                ))}
+              <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                {isAttrLoading ? (
+                  <div className="col-span-2 flex justify-center py-10"><CustomSpinner/></div>
+                ) : dynamicAttributes.length > 0 ? (
+                  dynamicAttributes.map((attr) => (
+                    <div key={attr.id} className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
+                      <label className="text-[11px] font-black uppercase text-gray-400 tracking-wider mb-2 block">
+                        {attr.label || attr.name} <span className="text-emerald-600">({attr.groupName})</span>
+                      </label>
+                      <div className="flex gap-2">
+                        <input 
+                          value={tempInput[attr.label || attr.name] || ""}
+                          onChange={(e) => setTempInput({...tempInput, [attr.label || attr.name]: e.target.value})}
+                          onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAttrAdd(attr.label || attr.name))}
+                          placeholder={`Add ${attr.label}...`}
+                          className="flex-1 px-3 py-2 text-sm rounded-lg border dark:bg-gray-900 outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                        <button type="button" onClick={() => handleAttrAdd(attr.label || attr.name)} className="bg-emerald-600 text-white p-2 rounded-lg hover:bg-emerald-700 transition-colors">
+                          <Plus size={20} />
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {(selectedAttributes[attr.label || attr.name] || []).map((val, idx) => (
+                          <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-black rounded-lg border border-emerald-200 dark:border-emerald-800">
+                            {val} <X size={12} className="cursor-pointer hover:text-red-500" onClick={() => removeAttrValue(attr.label || attr.name, val)} />
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                ) : category && (
+                  <div className="col-span-2 text-center py-10 text-gray-400 border-2 border-dashed rounded-2xl">
+                    No dynamic attributes found for this category.
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
           <div className="space-y-6">
             <h3 className="flex items-center gap-2 font-bold text-gray-800 dark:text-gray-200 border-b pb-2">
-              <Info size={18} className="text-emerald-600" /> Finalize
+              <Info size={18} className="text-emerald-600" /> Finalize Product
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <label className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-colors">
-                <ImageIcon
-                  className={product_images ? "text-emerald-600" : "text-gray-400"}
-                  size={32}
-                />
-                <p className="text-sm mt-2 text-center">
-                  {product_images ? product_images.name : "Upload Product Image"}
-                </p>
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={(e) => setProduct_Images(e.target.files?.[0] || null)}
-                />
+              <label className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all">
+                <ImageIcon className={product_images ? "text-emerald-600" : "text-gray-400"} size={40} />
+                <p className="text-sm mt-3 font-medium text-gray-500">{product_images ? product_images.name : "Click to Upload Product Image"}</p>
+                <input type="file" className="hidden" onChange={(e) => setProduct_Images(e.target.files?.[0] || null)} />
               </label>
 
               <div className="space-y-4">
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800"
-                >
+                <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800">
                   <option value="AVAILABLE">Available Now</option>
                   <option value="DRAFT">Save as Draft</option>
                 </select>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
-                  placeholder="Product Description..."
-                  className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800 resize-none"
-                ></textarea>
+                <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} placeholder="Detailed Product Description..." className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800 resize-none"></textarea>
               </div>
             </div>
           </div>
 
           <div className="flex justify-end gap-4 pt-6 border-t dark:border-gray-800">
-            <button
-              type="submit"
-              className="px-10 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95"
-            >
+            <button type="submit" className="px-12 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl shadow-xl transition-all active:scale-95 uppercase tracking-wider">
               Publish Product
             </button>
           </div>

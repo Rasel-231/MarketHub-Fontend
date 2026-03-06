@@ -1,4 +1,4 @@
-import { ICategoryResponse } from "@/types/types";
+import { IAttributeResponse, ICategoryResponse } from "@/types/types";
 import { tagtypes } from "../../reduxSetup/types";
 import { baseApi } from "../baseApi";
 
@@ -23,9 +23,25 @@ export const categoryApi = baseApi.injectEndpoints({
             providesTags: [tagtypes.category],
         }),
 
+
+        getattribute: build.query<IAttributeResponse, string>({
+            query: (id) => ({
+                url: `/products/attribute/${id}`,
+                method: "GET",
+            }),
+            providesTags: (result, error, id) => [{ type: tagtypes.attribute, id }],
+        }),
+
         deleteCategory: build.mutation<ICategoryResponse, string>({
             query: (id) => ({
                 url: `${CATEGORY_URL}/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: [tagtypes.category],
+        }),
+        deleteCategoryParmanently: build.mutation<ICategoryResponse, string>({
+            query: (id) => ({
+                url: `${CATEGORY_URL}/delete/${id}`,
                 method: "DELETE",
             }),
             invalidatesTags: [tagtypes.category],
@@ -38,6 +54,20 @@ export const categoryApi = baseApi.injectEndpoints({
                 data,
             }),
             invalidatesTags: [tagtypes.category],
+        }),
+
+        createAttribute: build.mutation<IAttributeResponse, {
+            name: string;
+            categoryId: string;
+            label?: string;
+            groupName?: string
+        }>({
+            query: (data) => ({
+                url: '/products/attribute/create',
+                method: "POST",
+                data,
+            }),
+            invalidatesTags: [tagtypes.attribute],
         }),
 
         updateCategory: build.mutation<ICategoryResponse, { id: string; data: string }>({
@@ -58,4 +88,7 @@ export const {
     useGetCategoryQuery,
     useGetSingleCategoryQuery,
     useUpdateCategoryMutation,
+    useDeleteCategoryParmanentlyMutation,
+    useCreateAttributeMutation,
+    useGetattributeQuery
 } = categoryApi;

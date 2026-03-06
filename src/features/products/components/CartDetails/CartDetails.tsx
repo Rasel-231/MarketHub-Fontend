@@ -123,7 +123,7 @@ const CartDetails = () => {
                   </TableCell>
 
                   <TableCell className="text-center font-bold text-rose-600">
-                    ${((item.flashSalePrice)||0 * item.quantity).toFixed(2)}
+                    ${( (item.flashSalePrice || 0) * item.quantity ).toFixed(2)}
                   </TableCell>
 
                   <TableCell className="text-right px-6">

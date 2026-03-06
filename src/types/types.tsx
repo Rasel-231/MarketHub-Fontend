@@ -135,8 +135,19 @@ export interface ICategory {
   id: string;
   name: string;
   status: "ACTIVE" | "INACTIVE";
+  _count?: {
+    products: number;
+  };
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IAttribute {
+  id:string;
+  name: string; 
+  categoryId: string; 
+  label?: string; 
+  groupName?: string
 }
 
 export interface ICategoryResponse {
@@ -146,6 +157,12 @@ export interface ICategoryResponse {
   data: {
     data: ICategory[];
   };
+}
+
+export interface IAttributeResponse {
+    success: boolean;
+    message: string;
+    data: IAttribute; // অথবা আপনার API যদি সরাসরি ডেটা পাঠায় তবে শুধু IAttribute
 }
 
 export interface IContact {
