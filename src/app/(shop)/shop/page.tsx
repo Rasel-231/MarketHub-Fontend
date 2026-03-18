@@ -1,10 +1,15 @@
-import Shop from '@/features/products/components/Shop/Shop';
+
+// import Shop from '@/features/products/components/Shop/ShopMainPage';
+import ShopModule from '@/features/products/components/Shop/ShopModule';
 import React from 'react';
 
 const ShoPage = () => {
     return (
         <div>
-            <Shop/>
+            {/* <Shop/> */}
+            {/* <ShopIndex/> */}
+            <ShopModule/>
+           
         </div>
     );
 };

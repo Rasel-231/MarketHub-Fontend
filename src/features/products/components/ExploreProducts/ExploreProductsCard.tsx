@@ -1,6 +1,6 @@
 "use client";
 
-import { IUserProducts, IUserProductsResponse } from "@/types/types";
+import { IErrorResponse, IUserProducts, IUserProductsResponse } from "@/types/types";
 import { Eye, Heart } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -10,13 +10,19 @@ import { useAddToCart } from "@/Utils/cartFuntionlaity";
 import { getRatingStats } from "@/Utils/calculatefuntion";
 import { useGetProductsQuery } from "@/store/api/productsApi/productsApi";
 import Link from "next/link";
+import { useAddWishlistMutation } from "@/store/api/wishlistApi/wishlistApi";
+import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
+import { toast } from "react-toastify";
 
 const ExploreProductsCard = () => {
   const { data, isLoading } = useGetProductsQuery(undefined);
+  const [addWishlist]=useAddWishlistMutation()
   const response = data as IUserProductsResponse;
   const products: IUserProducts[] = response?.data?.data || [];
   const [showAll, setShowAll] = useState(false);
   const { handleAdd } = useAddToCart();
+    const { data: userData } = useGetMyProfileQuery(undefined);
+       const userId = userData?.data?.id;
 
   if (isLoading)
     return (
@@ -28,6 +34,19 @@ const ExploreProductsCard = () => {
     return <div className="py-10 text-center">No Products Found!</div>;
 
   const visibleProducts = showAll ? products : products.slice(0, 4);
+   const handleWishlist = async (productId: string) => {
+      if (!userId) {
+        toast.warning("Please log in to add items to your wishlist!");
+        return;
+      }
+      try {
+        await addWishlist({ productId, userId }).unwrap();
+        toast.success("Product added to wishlist!");
+      } catch (err) {
+        const error = err as IErrorResponse;
+        toast.error(error?.data?.message || "Failed to add to wishlist!");
+      }
+    };
 
   return (
     <div className="container mx-auto px-4">
@@ -53,7 +72,7 @@ const ExploreProductsCard = () => {
                   </div>
 
                   <div>
-                    <button className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
+                    <button onClick={() =>  handleWishlist(product.id )} className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
                       <Heart size={18} />
                     </button>
                     <Link href={"/products"}>

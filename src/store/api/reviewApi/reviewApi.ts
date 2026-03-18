@@ -8,9 +8,9 @@ const REVIEW_URL = "/review";
 export const reviewApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
 
-        getReviews: build.query<IReviewResponse, string>({
+        getReviews: build.query<IReviewResponse, string | void>({
             query: (productId) => ({
-                url: `${REVIEW_URL}/${productId}`,
+                url: productId ? `${REVIEW_URL}/${productId}` : REVIEW_URL,
                 method: "GET",
             }),
             providesTags: [tagtypes.review],

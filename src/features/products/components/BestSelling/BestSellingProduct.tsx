@@ -6,15 +6,34 @@ import { Eye, Heart } from "lucide-react";
 import CustomSpinner from "@/components/shared/CustomSpinner";
 import { useAddToCart } from "@/Utils/cartFuntionlaity";
 import { getRatingStats } from "@/Utils/calculatefuntion";
-import { IFlagResponse, IProps } from "@/types/types";
+import { IErrorResponse, IFlagResponse, IProps } from "@/types/types";
 import Link from "next/link";
 import { useGetBestSellingQuery } from "@/store/api/flagApi/flagApi";
+import { useAddWishlistMutation } from "@/store/api/wishlistApi/wishlistApi";
+import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
+import { toast } from "react-toastify";
 
 const BestSellingProduct = ({ showAll }: IProps) => {
   const { data: response, isLoading } = useGetBestSellingQuery(undefined);
+  const [addWishlist]=useAddWishlistMutation()
   const rawData = (response as IFlagResponse)?.data?.data;
   const products = Array.isArray(rawData) ? rawData : [];
   const { handleAdd } = useAddToCart();
+    const { data: userData } = useGetMyProfileQuery(undefined);
+         const userId = userData?.data?.id;
+          const handleWishlist = async (productId: string) => {
+             if (!userId) {
+               toast.warning("Please log in to add items to your wishlist!");
+               return;
+             }
+             try {
+               await addWishlist({ productId, userId }).unwrap();
+               toast.success("Product added to wishlist!");
+             } catch (err) {
+               const error = err as IErrorResponse;
+               toast.error(error?.data?.message || "Failed to add to wishlist!");
+             }
+           };
 
   if (isLoading)
     return (
@@ -48,10 +67,10 @@ const BestSellingProduct = ({ showAll }: IProps) => {
                     </div>
                   )}
                   <div>
-                    <button className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
+                    <button onClick={() => handleWishlist(product.id )} className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
                       <Heart size={18} />
                     </button>
-                    <Link href={`product/${product.id}`}>
+                    <Link href={`products/${product.id}`}>
                       <button className="bg-white p-1.5 flex flex-col mt-2 rounded-full shadow-sm hover:text-red-500 transition-colors">
                         <Eye size={18} />
                       </button>

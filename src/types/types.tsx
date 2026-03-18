@@ -65,7 +65,7 @@ export interface IProps {
   showAll: boolean;
 }
 export interface IReviewUser {
-  name: string;
+  comment: string;
   seller?: {
     profilePhoto?: string;
   };
@@ -82,9 +82,10 @@ export interface IReview {
 export interface IReviewResponse {
   success: boolean;
   message: string;
-  data: IReview[];
+  data: IReview[]
 }
 export interface IUserProducts {
+  flashSaleEnd: string;
   id: string;
   title: string;
   description: string;
@@ -99,6 +100,8 @@ export interface IUserProducts {
   discountedRate: number;
   productActualPrice: number;
   colour: string[];
+  specification:string,
+  isFeatured:string,
   brand: string;
   images: string[];
   status: ProductStatus;
@@ -120,13 +123,17 @@ export interface IUserProducts {
   cartItems?: Record<string, unknown>[];
   orderItems?: Record<string, unknown>[];
 }
+export interface IMeta {
+  page: number;
+  limit: number;
+  total: number;}
 
 export interface IUserProductsResponse {
   success: boolean;
   statusCode: number;
   message: string;
   data: {
-    meta: string;
+    meta: IMeta;
     data: IUserProducts[];
   };
 }
@@ -165,6 +172,38 @@ export interface IAttributeResponse {
     data: IAttribute; // অথবা আপনার API যদি সরাসরি ডেটা পাঠায় তবে শুধু IAttribute
 }
 
+export interface ProductCardProps {
+  product: IUserProducts;
+  onAddToCart?: (product: IUserProducts) => void;
+  onWishlist?: (productId: string) => void;
+  isFlashSale?: boolean;
+}
+
+export interface ProductCardProps {
+  product: IUserProducts;
+  onWishlist?: (id: string) => void;
+  onAddToCart?: (product: IUserProducts) => void;
+  isFlashSale?: boolean;
+}
+
+export interface IFilterProps {
+  categories: ICategory[];
+  brands: string[];
+  selectedCategory: string | null;
+  setSelectedCategory: (id: string | null) => void;
+  selectedBrand: string | null;
+  setSelectedBrand: (brand: string | null) => void;
+  priceRange: number;
+  setPriceRange: (price: number) => void;
+  setCurrentPage: (page: number) => void;
+}
+
+export interface SearchHeaderProps {
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+  setCurrentPage: (page: number) => void;
+}
+
 export interface IContact {
   id: string;
   name: string;
@@ -193,6 +232,17 @@ export interface ICart {
     title: string;
     images: string[];
   };
+}
+
+export interface IShopParams {
+  [key: string]: unknown;
+  page: number;
+  limit: number;
+  category: string;
+  searchTerm: string;
+  maxPrice: number;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
 }
 
 export interface ICartResponse {

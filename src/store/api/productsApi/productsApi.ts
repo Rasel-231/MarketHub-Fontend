@@ -1,4 +1,4 @@
-import { IUserProducts, IUserProductsResponse } from "@/types/types";
+import { IUserProductsResponse } from "@/types/types";
 import { tagtypes } from "../../reduxSetup/types";
 import { baseApi } from "../baseApi";
 
@@ -8,7 +8,7 @@ const PRODUCTS_URL = "/products";
 export const productApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
 
-        getProducts: build.query<IUserProductsResponse, Record<string, IUserProducts> | void>({
+        getProducts: build.query<IUserProductsResponse, Record<string, unknown> | void>({
             query: (params) => ({
                 url: `${PRODUCTS_URL}/`,
                 method: "GET",

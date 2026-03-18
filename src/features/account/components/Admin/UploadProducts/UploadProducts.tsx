@@ -1,6 +1,7 @@
 "use client";
 import CustomSpinner from "@/components/shared/CustomSpinner";
-import { useGetCategoryQuery, useGetattributeQuery } from "@/store/api/categoryApi/categoryApi";
+import { useGetAttributeQuery } from "@/store/api/attributeApi/attributeApi";
+import { useGetCategoryQuery} from "@/store/api/categoryApi/categoryApi";
 import { useCreateProductMutation } from "@/store/api/productsApi/productsApi";
 import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
 import { ICategory, IErrorResponse, IAttribute } from "@/types/types";
@@ -21,7 +22,7 @@ const UploadProducts = () => {
   const [category, setCategory] = useState("");
   const { data: categoriesResponse, isLoading: isCategoriesLoading } = useGetCategoryQuery();
   
-  const { data: attrResponse, isFetching: isAttrLoading } = useGetattributeQuery(category, {
+  const { data: attrResponse, isFetching: isAttrLoading } = useGetAttributeQuery(category, {
     skip: !category,
     refetchOnMountOrArgChange: true,
   });

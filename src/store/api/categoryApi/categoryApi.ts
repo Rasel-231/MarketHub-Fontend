@@ -1,4 +1,4 @@
-import { IAttributeResponse, ICategoryResponse } from "@/types/types";
+import { ICategoryResponse } from "@/types/types";
 import { tagtypes } from "../../reduxSetup/types";
 import { baseApi } from "../baseApi";
 
@@ -24,13 +24,7 @@ export const categoryApi = baseApi.injectEndpoints({
         }),
 
 
-        getattribute: build.query<IAttributeResponse, string>({
-            query: (id) => ({
-                url: `/products/attribute/${id}`,
-                method: "GET",
-            }),
-            providesTags: (result, error, id) => [{ type: tagtypes.attribute, id }],
-        }),
+
 
         deleteCategory: build.mutation<ICategoryResponse, string>({
             query: (id) => ({
@@ -56,19 +50,7 @@ export const categoryApi = baseApi.injectEndpoints({
             invalidatesTags: [tagtypes.category],
         }),
 
-        createAttribute: build.mutation<IAttributeResponse, {
-            name: string;
-            categoryId: string;
-            label?: string;
-            groupName?: string
-        }>({
-            query: (data) => ({
-                url: '/products/attribute/create',
-                method: "POST",
-                data,
-            }),
-            invalidatesTags: [tagtypes.attribute],
-        }),
+
 
         updateCategory: build.mutation<ICategoryResponse, { id: string; data: string }>({
             query: ({ id, data }) => ({
@@ -89,6 +71,4 @@ export const {
     useGetSingleCategoryQuery,
     useUpdateCategoryMutation,
     useDeleteCategoryParmanentlyMutation,
-    useCreateAttributeMutation,
-    useGetattributeQuery
 } = categoryApi;

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Truck, RotateCcw, Heart, Minus, Plus} from "lucide-react";
 
-import { IUserProducts } from "@/types/types";
+import { IErrorResponse, IUserProducts } from "@/types/types";
 import { Rating } from "react-simple-star-rating";
 import CustomSpinner from "@/components/shared/CustomSpinner";
 import { useGetSingleProductsQuery } from "@/store/api/productsApi/productsApi";
@@ -13,14 +13,20 @@ import UserComments from "../ProductsTabs/UserComents";
 import RelatedProduct from "../RelatedProducts/RelatedProduct";
 import { useParams } from "next/navigation";
 import { getRatingStats } from "@/Utils/calculatefuntion";
+import { useAddWishlistMutation } from "@/store/api/wishlistApi/wishlistApi";
+import { toast } from "react-toastify";
+import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
 
 const ProductDetails = () => {
   const params = useParams();
   const { data: productResponse, isLoading } = useGetSingleProductsQuery(params.id as string);
+  const [addWishlist]=useAddWishlistMutation()
   console.log("Get Single Data Fetch ",productResponse)
 const product = productResponse?.data?.data?.[0] as IUserProducts | undefined;
   console.log("Products data fetch from params",product);
    const { averageRating, totalReviews } = getRatingStats(product?.review || []);
+     const { data: userData } = useGetMyProfileQuery(undefined);
+     const userId = userData?.data?.id;
   
   const [userSelectedImg, setUserSelectedImg] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -42,6 +48,19 @@ const product = productResponse?.data?.data?.[0] as IUserProducts | undefined;
       </div>
     );
   }
+   const handleWishlist = async (productId: string) => {
+      if (!userId) {
+        toast.warning("Please log in to add items to your wishlist!");
+        return;
+      }
+      try {
+        await addWishlist({ productId, userId }).unwrap();
+        toast.success("Product added to wishlist!");
+      } catch (err) {
+        const error = err as IErrorResponse;
+        toast.error(error?.data?.message || "Failed to add to wishlist!");
+      }
+    };
 
   return (
     <>
@@ -182,7 +201,7 @@ const product = productResponse?.data?.data?.[0] as IUserProducts | undefined;
                   Add to Cart
                 </button>
                 <div>
-                  <button className="p-2 border border-black/30 rounded-md bg-black hover:bg-gray-600 text-white transition-all h-11 w-12 flex items-center justify-center">
+                  <button onClick={() => handleWishlist(product.id)} className="p-2 border border-black/30 rounded-md bg-black hover:bg-gray-600 text-white transition-all h-11 w-12 flex items-center justify-center">
                     <Heart size={24} />
                   </button>
 
