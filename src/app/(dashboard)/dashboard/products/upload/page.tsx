@@ -1,7 +1,6 @@
-import UploadProducts from "@/features/account/components/Admin/UploadProducts/UploadProducts";
+import UploadProducts from '@/features/account/components/Admin/UploadProducts/UploadProducts';
 
-
-const UploadProductPages = () => {
+const UploadPage = () => {
     return (
         <div>
             <UploadProducts/>
@@ -9,4 +8,4 @@ const UploadProductPages = () => {
     );
 };
 
-export default UploadProductPages;
+export default UploadPage;

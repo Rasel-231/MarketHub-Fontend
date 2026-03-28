@@ -17,7 +17,7 @@ const TodaysProduct = () => {
       <MinHeader title="Today's Favorite" />
       
       <div className="my-6">
-        {/* উপরের অংশ: হেডিং এবং বাটন একই রো (Row) তে থাকবে */}
+
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl md:text-3xl font-extrabold uppercase tracking-wider">
             Flash Sales
@@ -33,13 +33,13 @@ const TodaysProduct = () => {
           </div>
         </div>
 
-        {/* নিচের অংশ: টাইমারটি আলাদা লাইনে (নিচে) থাকবে */}
+     
         <div className="mt-2">
           {flashSaleEndDate && <FlashSaleTimer endTime={flashSaleEndDate} />}
         </div>
       </div>
 
-      {/* প্রোডাক্ট সেকশন */}
+    
       <div className="mt-8">
         <ProductCard />
       </div>

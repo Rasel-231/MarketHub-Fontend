@@ -146,7 +146,7 @@ const CartDetails = () => {
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-lg">Your cart is currently empty.</p>
                     <Link
-                      href="/"
+                      href="/shop"
                       className="text-red-500 font-bold hover:underline"
                     >
                       Shop Now
@@ -161,7 +161,7 @@ const CartDetails = () => {
 
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 mt-12">
         <div className="lg:col-span-7">
-          <Link href="/">
+          <Link href="/shop">
             <button className="px-10 py-3 border-2 border-gray-200 rounded-md hover:bg-black hover:border-black hover:text-white transition-all font-bold uppercase text-sm tracking-wider">
               Return to Shop
             </button>

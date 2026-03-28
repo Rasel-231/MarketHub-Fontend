@@ -6,7 +6,7 @@ import AdminSidebar from '@/features/account/components/Admin/AdminSidebar/Admin
 import React, { useState } from 'react';
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-      const [isOpen, setIsOpen] = useState(false);
+      const [isOpen, setIsOpen] = useState(true);
     return (
          <div className="min-h-screen">
       <AdminNavber onToggle={() => setIsOpen(!isOpen)} isOpen={isOpen} />

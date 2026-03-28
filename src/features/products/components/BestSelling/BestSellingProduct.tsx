@@ -6,34 +6,18 @@ import { Eye, Heart } from "lucide-react";
 import CustomSpinner from "@/components/shared/CustomSpinner";
 import { useAddToCart } from "@/Utils/cartFuntionlaity";
 import { getRatingStats } from "@/Utils/calculatefuntion";
-import { IErrorResponse, IFlagResponse, IProps } from "@/types/types";
+import { IFlagResponse, IProps } from "@/types/types";
 import Link from "next/link";
 import { useGetBestSellingQuery } from "@/store/api/flagApi/flagApi";
-import { useAddWishlistMutation } from "@/store/api/wishlistApi/wishlistApi";
-import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
-import { toast } from "react-toastify";
+
+import { useWishlistAction } from "../WishListDetails/addToWishlist";
 
 const BestSellingProduct = ({ showAll }: IProps) => {
   const { data: response, isLoading } = useGetBestSellingQuery(undefined);
-  const [addWishlist]=useAddWishlistMutation()
   const rawData = (response as IFlagResponse)?.data?.data;
   const products = Array.isArray(rawData) ? rawData : [];
   const { handleAdd } = useAddToCart();
-    const { data: userData } = useGetMyProfileQuery(undefined);
-         const userId = userData?.data?.id;
-          const handleWishlist = async (productId: string) => {
-             if (!userId) {
-               toast.warning("Please log in to add items to your wishlist!");
-               return;
-             }
-             try {
-               await addWishlist({ productId, userId }).unwrap();
-               toast.success("Product added to wishlist!");
-             } catch (err) {
-               const error = err as IErrorResponse;
-               toast.error(error?.data?.message || "Failed to add to wishlist!");
-             }
-           };
+  const { handleWishlist } = useWishlistAction();
 
   if (isLoading)
     return (
@@ -51,7 +35,7 @@ const BestSellingProduct = ({ showAll }: IProps) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {visibleProducts.map((product) => {
           const { averageRating, totalReviews } = getRatingStats(
-            product?.review || []
+            product?.review || [],
           );
 
           return (
@@ -67,7 +51,10 @@ const BestSellingProduct = ({ showAll }: IProps) => {
                     </div>
                   )}
                   <div>
-                    <button onClick={() => handleWishlist(product.id )} className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors">
+                    <button
+                      onClick={() => handleWishlist(product.id)}
+                      className="bg-white p-1.5 rounded-full shadow-sm hover:text-red-500 transition-colors"
+                    >
                       <Heart size={18} />
                     </button>
                     <Link href={`products/${product.id}`}>
@@ -88,7 +75,7 @@ const BestSellingProduct = ({ showAll }: IProps) => {
                 <h3 className="font-bold text-lg truncate">{product.title}</h3>
                 <div className="flex items-center justify-between">
                   <span className="flex gap-4 items-center">
-                     <span className="text-xl font-extrabold text-rose-500">
+                    <span className="text-xl font-extrabold text-rose-500">
                       $
                       {product.flashSalePrice
                         ? parseFloat(String(product.flashSalePrice)).toFixed(2)
@@ -96,7 +83,6 @@ const BestSellingProduct = ({ showAll }: IProps) => {
                     </span>
                     {product.discountedRate > 0 && (
                       <span className="text-gray-400 text-xl font-bold line-through">
-                      
                         $
                         {product.productActualPrice
                           ? product.productActualPrice.toFixed(2)

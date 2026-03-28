@@ -2,13 +2,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, Heart, ShoppingCart } from "lucide-react";
-import { IErrorResponse, ProductCardProps } from "@/types/types";
+import { ProductCardProps } from "@/types/types";
 import { getRatingStats } from "@/Utils/calculatefuntion";
 import { Rating } from "react-simple-star-rating";
 import { useAddToCart } from "@/Utils/cartFuntionlaity";
-import { useAddWishlistMutation } from "@/store/api/wishlistApi/wishlistApi";
-import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
-import { toast } from "react-toastify";
+
+import { useWishlistAction } from "@/features/products/components/WishListDetails/addToWishlist";
 
 const CustomProductCard = ({
   product,
@@ -16,22 +15,7 @@ const CustomProductCard = ({
 }: ProductCardProps) => {
   const { averageRating, totalReviews } = getRatingStats(product?.review || []);
   const { handleAdd } = useAddToCart();
-  const [addWishlist]=useAddWishlistMutation()
-    const { data: userData } = useGetMyProfileQuery(undefined);
-           const userId = userData?.data?.id;
-            const handleWishlist = async (productId: string) => {
-               if (!userId) {
-                 toast.warning("Please log in to add items to your wishlist!");
-                 return;
-               }
-               try {
-                 await addWishlist({ productId, userId }).unwrap();
-                 toast.success("Product added to wishlist!");
-               } catch (err) {
-                 const error = err as IErrorResponse;
-                 toast.error(error?.data?.message || "Failed to add to wishlist!");
-               }
-             };
+  const { handleWishlist } = useWishlistAction();
 
   const actualPrice = product.productActualPrice || 0;
   const displayPrice =
@@ -50,8 +34,11 @@ const CustomProductCard = ({
         )}
 
         <div className="absolute top-3 right-3 z-20 flex flex-col gap-2">
-          <button onClick={() => handleWishlist(product.id)} className="bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-sm text-gray-900 hover:text-red-500 transition-all active:scale-90">
-            <Heart  size={18} />
+          <button
+            onClick={() => handleWishlist(product.id)}
+            className="bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-sm text-gray-900 hover:text-red-500 transition-all active:scale-90"
+          >
+            <Heart size={18} />
           </button>
           <Link href={`/products/${product.id}`}>
             <div className="bg-white/90 backdrop-blur-sm p-2 rounded-xl shadow-sm text-gray-900 hover:text-orange-600 transition-all active:scale-90">

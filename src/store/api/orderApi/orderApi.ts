@@ -23,7 +23,7 @@ export const orderApi = baseApi.injectEndpoints({
         }),
         deleteOrder: build.mutation<IOrderResponse, string>({
             query: (id) => ({
-                url: `${ORDER_URL}/${id}`,
+                url: `${ORDER_URL}/cancel/${id}`,
                 method: "DELETE",
             }),
             invalidatesTags: [tagtypes.order],
@@ -41,12 +41,13 @@ export const orderApi = baseApi.injectEndpoints({
 
         updateOrder: build.mutation<IOrderResponse, { id: string; data: Partial<IOrder> }>({
             query: ({ id, data }) => ({
-                url: `${ORDER_URL}/${id}`,
+                url: `${ORDER_URL}/update/${id}`,
                 method: "PATCH",
                 data: data,
             }),
             invalidatesTags: [tagtypes.order],
         }),
+
     }),
 });
 

@@ -38,7 +38,28 @@ export interface LoginData {
   password?: string;
   [key: string]: unknown;
 }
+export interface ITimer {
+  deadline: string;
+}
 
+export interface ISpecificationField {
+    label: string;
+    value: string;
+}
+
+export interface ISpecificationGroup {
+    groupName: string;
+    fields: ISpecificationField[];
+}
+export interface IAiAssistantResponse {
+  reply: string;
+  success: boolean;
+  message: string;
+  data: {
+    reply: string;
+    userName: string;
+  };
+}
 export interface ICreateUser {
   name: string;
   email: string;
@@ -210,6 +231,7 @@ export interface IContact {
   contactNumber: string;
   email: string;
   message: string;
+  isSupport:boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -273,14 +295,27 @@ export interface IOrderItem {
     images: string[];
   };
 }
+export type TOrderStatus = 
+  | 'PENDING' | 'ORDER_RECEIVED' | 'ORDER_PACKED' 
+  | 'SENT_TO_WAREHOUSE' | 'RECEIVED_AT_WAREHOUSE' 
+  | 'SENT_TO_DESTINATION' | 'DESTINATION_RECEIVED' 
+  | 'RIDER_ASSIGNED' | 'OUT_FOR_DELIVERY' 
+  | 'DELIVERED' | 'CANCELLED';
 
 export interface IOrder {
+  user?: {
+    id: string;
+    name: string;
+    email?: string;
+  };
   id: string;
   orderId?: string;
+  riderName?:string;
+  riderPhone?:string;
   userId: string;
   items: IOrderItem[];
   totalAmount: number;
-  status: "PENDING" | "DELIVERED" | "CANCELLED";
+  status: TOrderStatus;
   paymentStatus: "PAID" | "FAILED" | "UNPAID" | "REFUNDED";
   transactionId?: string;
 

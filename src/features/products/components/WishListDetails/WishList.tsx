@@ -16,6 +16,13 @@ const WishList = () => {
   const [deleteWishlist] = useDeleteWishlistMutation();
   const wishlistItems = (wishlistResponse?.data as IWishlist[]) || [];
   const { handleAdd} = useAddToCart();
+  const handleMoveAllToBag = () => {
+    wishlistItems.forEach((item) => {
+      if (item.products) {
+        handleAdd(item.products, item.id);
+      }
+    });
+  };
 
   if (isLoading) return <div className="py-10 text-center font-medium"><CustomSpinner/></div>;
   if (isError) return <div className="py-10 text-center text-red-500">Something went wrong!</div>;
@@ -29,9 +36,14 @@ const WishList = () => {
         <h1 className="text-xl font-semibold text-black">
           Wishlist ({wishlistItems.length})
         </h1>
-        <button className="px-6 py-3 border border-gray-300 rounded-sm font-medium hover:bg-gray-100 transition">
-          Move All To Bag
-        </button>
+        {wishlistItems.length > 0 && (
+          <button 
+            onClick={handleMoveAllToBag} 
+            className="px-6 py-3 border border-gray-300 rounded-sm font-medium hover:bg-gray-100 transition"
+          >
+            Move All To Bag
+          </button>
+        )}
       </div>
 
       {wishlistItems.length === 0 ? (
@@ -54,7 +66,7 @@ const WishList = () => {
                   )}
 
                   <Image
-                    src={product.images?.[0] || "/placeholder.png"} // fallback ইমেজ
+                    src={product.images?.[0] || "/placeholder.png"} 
                     alt={product.title || "product image"}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"

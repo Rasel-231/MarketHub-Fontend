@@ -43,6 +43,7 @@ export default function RootLayout({
           <Providers>
             {children}
             <ToastContainer position="top-center" autoClose={3000} />
+            
           </Providers>
         </div>
       </body>

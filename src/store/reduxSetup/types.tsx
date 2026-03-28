@@ -10,8 +10,9 @@ export enum tagtypes {
   wishlist="wishlist",
   review="review",
   flag="flag",
-  attribute="attribute"
+  attribute="attribute",
+  assistant="assistant"
 }
 
-export const tagtypeList = [tagtypes.user,tagtypes.product,tagtypes.contact,tagtypes.category,tagtypes.cart,tagtypes.order,tagtypes.payment,tagtypes.custom,tagtypes.wishlist,tagtypes.review,tagtypes.flag,tagtypes.attribute];
+export const tagtypeList = [tagtypes.user,tagtypes.product,tagtypes.contact,tagtypes.category,tagtypes.cart,tagtypes.order,tagtypes.payment,tagtypes.custom,tagtypes.wishlist,tagtypes.review,tagtypes.flag,tagtypes.attribute,tagtypes.assistant];
 

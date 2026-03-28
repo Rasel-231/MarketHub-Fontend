@@ -83,7 +83,7 @@ const Admin_My_Account = () => {
                     My Profile
                   </Link>
                   <Link
-                    href="products/edit"
+                    href="products/update"
                     className="text-gray-500 text-sm hover:text-red-500 transition pl-3 hover:translate-x-1 duration-200"
                   >
                     Edit Products

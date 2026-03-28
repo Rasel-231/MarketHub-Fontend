@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import Img from "../../../../public/Image/headphone.jpeg"
+import TimeCounter from "@/Utils/timeCounter";
+import Link from "next/link";
 
 const Banner = () => {
    
-    const timerCircleStyle = "bg-white text-black rounded-full h-16 w-16 flex flex-col items-center justify-center text-xs font-bold leading-tight";
-
     return (
         <section className="m-5 p-5 my-10 rounded-sm shadow-lg relative overflow-hidden bg-black mx-auto container ">
             <div className="absolute inset-0 z-10 flex flex-col justify-center px-10 pointer-events-none">
@@ -19,16 +19,12 @@ const Banner = () => {
                     </h2>
                     
                     {/* Countdown Timer */}
-                    <div className="flex gap-4 mb-8">
-                        <div className={timerCircleStyle}><span>05</span><span>Days</span></div>
-                        <div className={timerCircleStyle}><span>23</span><span>Hours</span></div>
-                        <div className={timerCircleStyle}><span>59</span><span>Mins</span></div>
-                        <div className={timerCircleStyle}><span>35</span><span>Secs</span></div>
-                    </div>
+                   <TimeCounter deadline="2026-05-20T00:00:00" />
 
-                    <button className="bg-green-500 hover:bg-green-600 transition-colors text-white py-3 px-8 font-bold rounded shadow-md">
-                        Buy Now!
-                    </button>
+                    <Link href={"/shop"}>
+                    <button className="bg-green-500 hover:bg-green-600 transition-colors text-white mt-5 py-3 px-8 font-bold rounded shadow-md">
+                        Shop Now!
+                    </button></Link>
                 </div>
             </div>
 

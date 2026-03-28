@@ -21,17 +21,27 @@ export const contactApi = baseApi.injectEndpoints({
             }),
             providesTags: [tagtypes.contact],
         }),
-        deleteContactMessages: build.query<IContactMessagesResponse, void>({
-            query: () => ({
-                url: `${CONTACT_MESSAGE_URL}/`,
+
+        deleteContactMessages: build.mutation<IContactMessagesResponse, string>({
+            query: (id) => ({
+                url: `${CONTACT_MESSAGE_URL}/${id}`,
                 method: "DELETE",
             }),
-            providesTags: [tagtypes.contact],
+            invalidatesTags: [tagtypes.contact],
         }),
 
         createContactMessage: build.mutation<IContactMessagesResponse, Partial<IContact>>({
             query: (data) => ({
                 url: `${CONTACT_MESSAGE_URL}/create`,
+                method: "POST",
+                data: data,
+
+            }),
+            invalidatesTags: [tagtypes.contact],
+        }),
+        supportReply: build.mutation<IContactMessagesResponse, Partial<IContact>>({
+            query: (data) => ({
+                url: `${CONTACT_MESSAGE_URL}/support/reply`,
                 method: "POST",
                 data: data,
 
@@ -44,7 +54,8 @@ export const contactApi = baseApi.injectEndpoints({
 
 export const {
     useCreateContactMessageMutation,
-    useDeleteContactMessagesQuery,
+    useDeleteContactMessagesMutation,
     useGetAllContactMessagesQuery,
-    useGetSingleContactMessagesQuery
+    useGetSingleContactMessagesQuery,
+    useSupportReplyMutation,
 } = contactApi;

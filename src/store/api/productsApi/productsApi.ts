@@ -49,7 +49,7 @@ export const productApi = baseApi.injectEndpoints({
 
         updateProduct: build.mutation<IUserProductsResponse, { id: string; data: FormData }>({
             query: ({ id, data }) => ({
-                url: `${PRODUCTS_URL}/${id}`,
+                url: `${PRODUCTS_URL}/update/${id}`,
                 method: "PATCH",
                 data: data,
                 contentType: "multipart/form-data",

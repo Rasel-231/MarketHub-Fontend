@@ -18,8 +18,7 @@ import {
   useCreateCategoryMutation, 
   useDeleteCategoryParmanentlyMutation, 
   useGetCategoryQuery,
-  useCreateAttributeMutation,
-  useGetattributeQuery
+
 } from "@/store/api/categoryApi/categoryApi";
 import { ICategory, IErrorResponse } from "@/types/types";
 import {
@@ -31,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useCreateAttributeMutation, useGetAttributeQuery } from "@/store/api/attributeApi/attributeApi";
 
 interface IAttribute {
   id: string;
@@ -58,7 +58,7 @@ export default function Category() {
   const [deleteCategory] = useDeleteCategoryParmanentlyMutation();
   
   const [createAttribute, { isLoading: isAttributeCreating }] = useCreateAttributeMutation();
-  const { data: attrResponse } = useGetattributeQuery(
+  const { data: attrResponse } = useGetAttributeQuery(
     selectedCategory?.id ?? "",
     { skip: !selectedCategory?.id }
   );

@@ -1,8 +1,8 @@
-import { IAttributeResponse } from "@/types/types";
+import { IAttributeResponse, ISpecificationGroup } from "@/types/types";
 import { tagtypes } from "../../reduxSetup/types";
 import { baseApi } from "../baseApi";
 
-const ATTRIBUTE_URL = "attribute";
+const ATTRIBUTE_URL = "/attribute";
 
 export const attributeApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
@@ -32,6 +32,14 @@ export const attributeApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: [tagtypes.attribute],
         }),
+        updateSpecification: build.mutation<IAttributeResponse, { id: string; data: ISpecificationGroup[] }>({
+            query: ({ id, data }) => ({
+                url: `${ATTRIBUTE_URL}/${id}`,
+                method: "PATCH",
+                data: data,
+            }),
+            invalidatesTags: [tagtypes.attribute],
+        }),
 
         createAttribute: build.mutation<
             IAttributeResponse,
@@ -57,4 +65,5 @@ export const {
     useDeleteAttributeMutation,
     useUpdateAttributeMutation,
     useCreateAttributeMutation,
+    useUpdateSpecificationMutation
 } = attributeApi;

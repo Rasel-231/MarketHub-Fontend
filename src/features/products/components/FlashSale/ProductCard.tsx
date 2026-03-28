@@ -4,26 +4,22 @@ import { Rating } from "react-simple-star-rating";
 import { Eye, Heart } from "lucide-react";
 import { useState } from "react";
 
-import { IErrorResponse, IFlagResponse } from "@/types/types";
+import { IFlagResponse } from "@/types/types";
 import { getRatingStats } from "@/Utils/calculatefuntion";
 import { useAddToCart } from "@/Utils/cartFuntionlaity";
 import CustomSpinner from "@/components/shared/CustomSpinner";
-import { useAddWishlistMutation } from "@/store/api/wishlistApi/wishlistApi";
-import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
-import { toast } from "react-toastify";
 import Link from "next/link";
 import { useGetFlashSalesQuery } from "@/store/api/flagApi/flagApi";
+import { useWishlistAction } from "../WishListDetails/addToWishlist";
 
 const ProductCard = () => {
   const [showAll, setShowAll] = useState(false);
   const { data: response, isLoading } = useGetFlashSalesQuery(undefined);
-  const { data: userData } = useGetMyProfileQuery(undefined);
-  const [addWishlist] = useAddWishlistMutation();
   const { handleAdd } = useAddToCart();
-
+ const {handleWishlist}=useWishlistAction()
   const rawRes = (response as IFlagResponse)?.data?.data;
   const products = Array.isArray(rawRes) ? rawRes : [];
-  const userId = userData?.data?.id;
+
 
   if (isLoading)
     return (
@@ -34,19 +30,6 @@ const ProductCard = () => {
   if (!products?.length)
     return <div className="py-10 text-center">No Products Found!</div>;
 
-  const handleWishlist = async (productId: string) => {
-    if (!userId) {
-      toast.warning("Please log in to add items to your wishlist!");
-      return;
-    }
-    try {
-      await addWishlist({ productId, userId }).unwrap();
-      toast.success("Product added to wishlist!");
-    } catch (err) {
-      const error = err as IErrorResponse;
-      toast.error(error?.data?.message || "Failed to add to wishlist!");
-    }
-  };
 
   const visibleProducts = showAll ? products : products.slice(0, 4);
 

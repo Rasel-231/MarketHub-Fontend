@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "react-toastify";
+
 import { Filter, X } from "lucide-react";
 import CustomSpinner from "@/components/shared/CustomSpinner";
 import { useAddToCart } from "@/Utils/cartFuntionlaity";
-import { useAddWishlistMutation } from "@/store/api/wishlistApi/wishlistApi";
-import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
-import { IUserProducts, IErrorResponse } from "@/types/types";
+
 import { useUpdateFilters } from "../../hooks/useUpdateFilters";
 import ShopFilters from "./Components/ShopFilters";
 import ShopToolbar from "./Components/ShopToolbar";
@@ -16,47 +14,32 @@ import CustomProductCard from "@/components/shared/ProductCard";
 import ShopPagination from "./Components/ShopPagination";
 import { SHOP_CONSTANT } from "./Constant/Shop.Constant";
 import { useGetProductsQuery } from "@/store/api/productsApi/productsApi";
+import { useWishlistAction } from "../WishListDetails/addToWishlist";
+import { IUserProducts } from "@/types/types";
 
 const ShopModule = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { updateFilters, searchParams } = useUpdateFilters();
   const { handleAdd } = useAddToCart();
-  const [addWishlist] = useAddWishlistMutation();
-  const { data: userData } = useGetMyProfileQuery(undefined);
+  const { handleWishlist } = useWishlistAction();
 
   const currentFilters = Object.fromEntries(searchParams.entries());
   const {
     data: productResponse,
     isLoading,
     isFetching,
-    
   } = useGetProductsQuery({
     ...currentFilters,
-  limit: SHOP_CONSTANT.ITEM_PERPAGE,
-  page: Number(currentFilters.page) || SHOP_CONSTANT.DEFAULT_PAGE,
+    limit: SHOP_CONSTANT.ITEM_PERPAGE,
+    page: Number(currentFilters.page) || SHOP_CONSTANT.DEFAULT_PAGE,
   });
 
   const products = productResponse?.data?.data || [];
   const meta = productResponse?.data?.meta;
-  const userId = userData?.data?.id;
 
   const totalItems = meta?.total || 0;
-  const limit = SHOP_CONSTANT.ITEM_PERPAGE
+  const limit = SHOP_CONSTANT.ITEM_PERPAGE;
   const totalPages = Math.ceil(totalItems / limit) || 1;
-
-  const handleWishlist = async (productId: string) => {
-    if (!userId) {
-      toast.warning("Please log in to add items to your wishlist!");
-      return;
-    }
-    try {
-      await addWishlist({ productId, userId }).unwrap();
-      toast.success("Product added to wishlist!");
-    } catch (err) {
-      const error = err as IErrorResponse;
-      toast.error(error?.data?.message || "Failed to add to wishlist!");
-    }
-  };
 
   if (isLoading) {
     return (
@@ -104,7 +87,8 @@ const ShopModule = () => {
                   filters={currentFilters}
                   onFilterChange={(updates) => {
                     updateFilters(updates);
-                    if (updates.category || updates.brand) setIsDrawerOpen(false);
+                    if (updates.category || updates.brand)
+                      setIsDrawerOpen(false);
                   }}
                 />
               </div>
@@ -152,8 +136,6 @@ const ShopModule = () => {
             </div>
           </div>
 
-          
-
           {products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
               {products.map((product: IUserProducts) => (
@@ -179,7 +161,9 @@ const ShopModule = () => {
 
           {products.length > 0 && (
             <ShopPagination
-              currentPage={Number(currentFilters.page) || SHOP_CONSTANT.DEFAULT_PAGE}
+              currentPage={
+                Number(currentFilters.page) || SHOP_CONSTANT.DEFAULT_PAGE
+              }
               totalItems={totalItems}
               totalPages={totalPages}
               itemsPerPage={limit}
