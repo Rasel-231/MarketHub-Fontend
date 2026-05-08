@@ -2,19 +2,22 @@
 
 import { IOrder } from "@/types/types";
 import Link from "next/link";
-import {  Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useGetOrderQuery } from "@/store/api/orderApi/orderApi";
 import { MyTable } from "@/components/shared/Table";
 
-const OrderHistory = () => {
+const PendingOrder = () => {
   const { data: orderResponse, isLoading } = useGetOrderQuery(undefined);
-  const orders = (orderResponse?.data as IOrder[]) || [];
+  const pendingOrders =
+    (orderResponse?.data as IOrder[])?.filter(
+      (order) => order.status === "PENDING",
+    ) || [];
 
   const myColumns = [
     {
       header: "SI",
       key: "index" as const,
-      render: (item: IOrder) => orders.indexOf(item) + 1,
+      render: (item: IOrder) => pendingOrders.indexOf(item) + 1,
     },
     {
       header: "Status",
@@ -59,7 +62,7 @@ const OrderHistory = () => {
               : "text-red-500 font-bold"
           }
         >
-          {item.status}
+          {item.status === "PENDING" && "Pending"}
         </span>
       ),
     },
@@ -77,14 +80,15 @@ const OrderHistory = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Order History</h1>
+      <h1 className="text-2xl font-bold mb-6">Pending Orders</h1>
       <MyTable<IOrder>
         columns={myColumns}
-        data={orders}
+        data={pendingOrders}
         isLoading={isLoading}
       />
+      
     </div>
   );
 };
 
-export default OrderHistory;
+export default PendingOrder;

@@ -6,7 +6,10 @@ import { toast } from "react-toastify";
 import { useState, FormEvent, ChangeEvent } from "react";
 import Image from "next/image";
 import CustomSpinner from "@/components/shared/CustomSpinner";
-import { useGetMyProfileQuery, useUpdateUserMutation } from "@/store/api/userApi/userApi";
+import {
+  useGetMyProfileQuery,
+  useUpdateUserMutation,
+} from "@/store/api/userApi/userApi";
 import { IErrorResponse } from "@/types/types";
 
 const Admin_My_Account = () => {
@@ -18,7 +21,7 @@ const Admin_My_Account = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-      <CustomSpinner/>
+        <CustomSpinner />
       </div>
     );
   }
@@ -44,7 +47,7 @@ const Admin_My_Account = () => {
       }).unwrap();
 
       toast.success("User Updated Successfully");
-    } catch(err) {
+    } catch (err) {
       const error = err as IErrorResponse;
       toast.error(error?.data?.message || "User Update Failed");
     }
@@ -88,6 +91,13 @@ const Admin_My_Account = () => {
                   >
                     Edit Products
                   </Link>
+                  <Link
+                    href={"/dashboard/banner-changes"}
+                    className="text-gray-500 text-sm hover:text-red-500 transition pl-3 hover:translate-x-1 duration-200"
+                  >
+                    Add Banner
+                  </Link>
+                 
                   <Link
                     href="#"
                     className="text-gray-500 text-sm hover:text-red-500 transition pl-3 hover:translate-x-1 duration-200"

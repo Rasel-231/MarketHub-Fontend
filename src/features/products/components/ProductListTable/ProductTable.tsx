@@ -78,7 +78,7 @@ const ProductTable = () => {
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                  
-                  <Link href={`/products/update/${product.id}`}>
+                  <Link href={`/dashboard/products/update/${product.id}`}>
                     <Button
                       variant="outline"
                       size="sm"

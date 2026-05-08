@@ -36,6 +36,10 @@ const MyAccount = () => {
                   Address Book
                 </p>
                 <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">
+                  <Link href={"/dashboard/banner-changes"} >
+                  Add Banner</Link>
+                </p>
+                <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">
                   My Payment Options
                 </p>
               </div>

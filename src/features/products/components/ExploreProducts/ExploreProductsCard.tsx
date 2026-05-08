@@ -65,7 +65,7 @@ const ExploreProductsCard = () => {
                     >
                       <Heart size={18} />
                     </button>
-                    <Link href={"/products"}>
+                    <Link href={`products/${product.id}`}>
                       <button className="bg-white p-1.5 flex flex-col mt-2 rounded-full shadow-sm hover:text-red-500 transition-colors">
                         <Eye size={18} />
                       </button>

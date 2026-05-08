@@ -2,6 +2,7 @@
 
 import CustomSpinner from "@/components/shared/CustomSpinner";
 import { useGetCategoryQuery } from "@/store/api/categoryApi/categoryApi";
+import { useGetFeaturedProductsQuery } from "@/store/api/flagApi/flagApi";
 import { useGetSingleProductsQuery, useUpdateProductMutation } from "@/store/api/productsApi/productsApi";
 import { useGetMyProfileQuery } from "@/store/api/userApi/userApi";
 import { ICategory, IErrorResponse, IUserProducts } from "@/types/types";
@@ -15,6 +16,7 @@ import {
   Settings2,
   Trash2,
   X,
+  Star,
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
@@ -30,23 +32,25 @@ interface ISpecificationGroup {
   fields: ISpecificationField[];
 }
 
-
-const ProductEditForm= () => {
+const ProductEditForm = () => {
   const params = useParams();
   const productId = params?.id as string;
   const { data: categoriesResponse, isLoading: isCategoriesLoading } = useGetCategoryQuery();
   const [updateProducts] = useUpdateProductMutation();
+  const { data: getFeatured } = useGetFeaturedProductsQuery(undefined);
   const { data: profileResponse, isLoading: isProfileLoading } = useGetMyProfileQuery();
-  const { data: productResponse, isLoading: isProductLoading } = useGetSingleProductsQuery( productId);
+  const { data: productResponse, isLoading: isProductLoading } = useGetSingleProductsQuery(productId);
 
   const productsData = useMemo(() => (productResponse?.data?.data as IUserProducts[]) || [], [productResponse]);
   const product = productsData.length > 0 ? productsData[0] : null;
   const id = product?.id;
 
   const categories = categoriesResponse?.data?.data || [];
+  const featuredProducts = useMemo(() => getFeatured?.data?.data || [], [getFeatured]);
 
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
+  const [featured, setFeatured] = useState<boolean>(false);
   const [description, setDescription] = useState("");
   const [sellingPrice, setSellingPrice] = useState("");
   const [productActualPrice, setproductActualPrice] = useState("");
@@ -54,11 +58,10 @@ const ProductEditForm= () => {
   const [category, setCategory] = useState("");
   const [shopName, setShopName] = useState("");
   const [status, setStatus] = useState("AVAILABLE");
-  const [product_images, setProduct_Images] = useState<File | null>(null);
+  const [product_images, setProduct_Images] = useState<File[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColours, setSelectedColours] = useState<string[]>([]);
   const [specifications, setSpecifications] = useState<ISpecificationGroup[]>([]);
-
   const [isDataInitialized, setIsDataInitialized] = useState(false);
 
   useEffect(() => {
@@ -76,12 +79,13 @@ const ProductEditForm= () => {
         setSelectedSizes(product.size || []);
         setSelectedColours(product.colour || []);
         setSpecifications(Array.isArray(product.specification) ? (product.specification as ISpecificationGroup[]) : []);
+        const isCurrentlyFeatured = Boolean(product.isFeatured) || featuredProducts.some((p) => p.id === product.id);
+        setFeatured(isCurrentlyFeatured);
         setIsDataInitialized(true);
       };
-
       initData();
     }
-  }, [product, isDataInitialized]);
+  }, [product, isDataInitialized, featuredProducts]);
 
   const addGroup = () => {
     setSpecifications([...specifications, { groupName: "", fields: [{ label: "", value: "" }] }]);
@@ -120,6 +124,7 @@ const ProductEditForm= () => {
       sellingPrice: Number(sellingPrice) || 0,
       productActualPrice: Number(productActualPrice) || 0,
       discountedRate: Number(discountedRate) || 0,
+      isFeatured: featured,
       stock: 10,
       categoryId: category,
       size: selectedSizes,
@@ -131,7 +136,12 @@ const ProductEditForm= () => {
     };
 
     formData.append("data", JSON.stringify(productData));
-    if (product_images) formData.append("products_image", product_images);
+
+    if (product_images.length > 0) {
+      product_images.forEach((file) => {
+        formData.append("products_images", file);
+      });
+    }
 
     try {
       const res = await updateProducts({ id, data: formData }).unwrap();
@@ -180,7 +190,7 @@ const ProductEditForm= () => {
             <h3 className="flex items-center gap-2 font-bold text-gray-800 dark:text-gray-200 border-b pb-2">
               <DollarSign size={18} className="text-emerald-600" /> Pricing & Inventory
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Selling Price</label>
                 <input value={sellingPrice} onChange={(e) => setSellingPrice(e.target.value)} type="number" className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800 outline-none focus:ring-2 focus:ring-emerald-500" />
@@ -192,6 +202,18 @@ const ProductEditForm= () => {
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Discount Rate (%)</label>
                 <input value={discountedRate} onChange={(e) => setDiscountedRate(e.target.value)} type="number" className="w-full px-4 py-2.5 rounded-lg border dark:bg-gray-800 outline-none focus:ring-2 focus:ring-emerald-500" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Featured Product</label>
+                <div
+                  onClick={() => setFeatured(!featured)}
+                  className={`flex items-center justify-between px-4 py-2.5 rounded-lg border cursor-pointer transition-all ${featured ? 'bg-emerald-50 border-emerald-500 dark:bg-emerald-900/20' : 'dark:bg-gray-800'}`}
+                >
+                  <span className={`text-sm font-medium ${featured ? 'text-emerald-700 dark:text-emerald-400' : 'text-gray-500'}`}>
+                    {featured ? "true" : "false"}
+                  </span>
+                  <Star size={18} className={featured ? "fill-emerald-500 text-emerald-500" : "text-gray-400"} />
+                </div>
               </div>
             </div>
           </div>
@@ -258,38 +280,38 @@ const ProductEditForm= () => {
                       newSpecs[gIdx].groupName = e.target.value;
                       setSpecifications(newSpecs);
                     }}
-                    placeholder="Group Name (e.g. Processor)"
+                    placeholder="Group Name"
                     className="mb-6 w-full md:w-1/2 px-1 py-1 font-black text-lg border-b-2 border-emerald-200 bg-transparent outline-none focus:border-emerald-600 transition-all"
                   />
                   <div className="space-y-4">
                     {group.fields.map((field, fIdx) => (
-                      <div key={fIdx} className="flex items-center gap-4 animate-in fade-in duration-300">
+                      <div key={fIdx} className="flex items-center gap-4">
                         <input
-                          placeholder="Label (e.g. Brand)"
+                          placeholder="Label"
                           value={field.label}
                           onChange={(e) => {
                             const newSpecs = [...specifications];
                             newSpecs[gIdx].fields[fIdx].label = e.target.value;
                             setSpecifications(newSpecs);
                           }}
-                          className="flex-1 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-sm dark:bg-gray-800 outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="flex-1 px-4 py-2 rounded-xl border dark:bg-gray-800 outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                         <input
-                          placeholder="Value (e.g. AMD)"
+                          placeholder="Value"
                           value={field.value}
                           onChange={(e) => {
                             const newSpecs = [...specifications];
                             newSpecs[gIdx].fields[fIdx].value = e.target.value;
                             setSpecifications(newSpecs);
                           }}
-                          className="flex-1 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-sm dark:bg-gray-800 outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="flex-1 px-4 py-2 rounded-xl border dark:bg-gray-800 outline-none focus:ring-2 focus:ring-emerald-500"
                         />
-                        <button type="button" onClick={() => removeField(gIdx, fIdx)} className="text-gray-300 hover:text-red-400 transition-colors">
+                        <button type="button" onClick={() => removeField(gIdx, fIdx)} className="text-gray-300 hover:text-red-400">
                           <X size={16} />
                         </button>
                       </div>
                     ))}
-                    <button type="button" onClick={() => addField(gIdx)} className="text-xs text-emerald-600 dark:text-emerald-400 font-black flex items-center gap-1 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 px-2 py-1 rounded-lg transition-all mt-2">
+                    <button type="button" onClick={() => addField(gIdx)} className="text-xs text-emerald-600 font-black px-2 py-1 rounded-lg mt-2">
                       + Add Item
                     </button>
                   </div>
@@ -304,12 +326,26 @@ const ProductEditForm= () => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Product Image</label>
-                <label className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-900/10 transition-all border-emerald-100">
-                  <ImageIcon className={product_images ? "text-emerald-600" : "text-gray-300"} size={40} />
-                  <p className="text-sm mt-3 text-center text-gray-500 font-medium">{product_images ? product_images.name : "Choose a high-quality product image"}</p>
-                  <input type="file" className="hidden" onChange={(e) => setProduct_Images(e.target.files?.[0] || null)} />
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Product Images</label>
+                <label className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50 transition-all border-emerald-100">
+                  <ImageIcon className={product_images.length > 0 ? "text-emerald-600" : "text-gray-300"} size={40} />
+                  <p className="text-sm mt-3 text-center text-gray-500 font-medium">
+                    {product_images.length > 0 ? `${product_images.length} images selected` : "Choose product images"}
+                  </p>
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => setProduct_Images(Array.from(e.target.files || []))}
+                  />
                 </label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {product_images.map((file, index) => (
+                    <span key={index} className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-100 line-clamp-1 max-w-[150px]">
+                      {file.name}
+                    </span>
+                  ))}
+                </div>
               </div>
               <div className="space-y-5">
                 <div className="space-y-2">
@@ -321,14 +357,14 @@ const ProductEditForm= () => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Full Description</label>
-                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} placeholder="Detailed product overview..." className="w-full px-4 py-3 rounded-xl border dark:bg-gray-800 outline-none focus:ring-2 focus:ring-emerald-500 resize-none"></textarea>
+                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="w-full px-4 py-3 rounded-xl border dark:bg-gray-800 outline-none focus:ring-2 focus:ring-emerald-500 resize-none"></textarea>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="flex justify-end pt-8 border-t border-gray-100 dark:border-gray-800">
-            <button type="submit" className="w-full md:w-auto px-16 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-200 dark:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+            <button type="submit" className="w-full md:w-auto px-16 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg rounded-2xl shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2">
               Update Product Now
             </button>
           </div>
@@ -338,4 +374,4 @@ const ProductEditForm= () => {
   );
 };
 
-export default ProductEditForm
+export default ProductEditForm;

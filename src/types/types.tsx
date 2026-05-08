@@ -7,6 +7,7 @@ export interface IMeta {
 export type UserRole = "Admin" | "Seller" | "User";
 
 export interface IUserResponse {
+  length: number;
   id: string;
   name: string;
   email: string;
@@ -382,4 +383,15 @@ export interface IErrorResponse {
     errorSources?: { path: string; message: string }[];
     stack?: string;
   };
+}
+
+
+export interface IBannerDoc {
+  id: string;
+  images: string[];
+}
+
+export interface IBannerImage {
+  id: string;
+  url: string;
 }

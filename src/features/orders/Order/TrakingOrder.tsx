@@ -40,14 +40,7 @@ const TrakingOrder = () => {
   const activeStepIndex = orderStages.findIndex(s => s.statusKey === currentStatus);
 
   // // টাইম ফরম্যাট করার ফাংশন
-  // const formatStepTime = (dateString: string) => {
-  //   if (!dateString) return "";
-  //   return new Date(dateString).toLocaleTimeString([], { 
-  //     hour: '2-digit', 
-  //     minute: '2-digit',
-  //     hour12: true 
-  //   });
-  // };
+  
 
   if (isLoading) return <div className="p-10 flex justify-center h-[60vh] items-center"><CustomSpinner/></div>;
   if (isError || !order) return <div className="p-10 text-center text-red-500 font-bold">অর্ডার পাওয়া যায়নি!</div>;

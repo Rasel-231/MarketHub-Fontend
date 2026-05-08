@@ -1,5 +1,7 @@
 export enum tagtypes {
   user = "user",
+
+  banner="banner",
   product = "products",
   contact ="contact",
   category ="Category",
@@ -14,5 +16,5 @@ export enum tagtypes {
   assistant="assistant"
 }
 
-export const tagtypeList = [tagtypes.user,tagtypes.product,tagtypes.contact,tagtypes.category,tagtypes.cart,tagtypes.order,tagtypes.payment,tagtypes.custom,tagtypes.wishlist,tagtypes.review,tagtypes.flag,tagtypes.attribute,tagtypes.assistant];
+export const tagtypeList = [tagtypes.user,tagtypes.banner,tagtypes.product,tagtypes.contact,tagtypes.category,tagtypes.cart,tagtypes.order,tagtypes.payment,tagtypes.custom,tagtypes.wishlist,tagtypes.review,tagtypes.flag,tagtypes.attribute,tagtypes.assistant];
 

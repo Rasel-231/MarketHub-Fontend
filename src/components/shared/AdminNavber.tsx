@@ -1,5 +1,5 @@
 "use client"
-import { Menu, X, Search } from "lucide-react"
+import { Menu} from "lucide-react"
 import Img from "../../../public/Image//bag-outline.png"
 import Image from "next/image";
 interface NavbarProps {
@@ -25,22 +25,14 @@ const AdminNavber = ({ onToggle, isOpen }: NavbarProps) => {
           <div className="flex items-center space-x-2 sm:space-x-4">
             
         
-            <button className="hidden md:flex p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              <Search className="h-5 w-5" />
-            </button>
-
-          
-            <a href="#" className="hidden lg:block px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-sm transition-all">
-              Subscribe
-            </a>
-
+           
            
             <button
               onClick={onToggle}
               className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-all border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
             >
               {isOpen ? (
-                <X className="h-6 w-6 text-emerald-600" />
+                <Menu className="h-6 w-6" />
               ) : (
                 <Menu className="h-6 w-6" />
               )}
