@@ -62,7 +62,7 @@ const PendingOrder = () => {
               : "text-red-500 font-bold"
           }
         >
-          {item.status === "PENDING" && "Pending"}
+          {item.status}
         </span>
       ),
     },
