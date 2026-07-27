@@ -1,7 +1,10 @@
 "use client";
 
 import CustomSpinner from "@/components/shared/CustomSpinner";
-import { useDeleteProductsMutation, useGetProductsQuery } from "@/store/api/productsApi/productsApi";
+import {
+  useDeleteProductsMutation,
+  useGetProductsQuery,
+} from "@/store/api/productsApi/productsApi";
 import {
   Table,
   TableBody,
@@ -12,8 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Trash2 } from "lucide-react"; 
-import { Button } from "@/components/ui/button"; 
+import { Edit, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { IUserProducts } from "@/types/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,7 +24,8 @@ import { toast } from "react-toastify";
 
 const ProductTable = () => {
   const { data: productResponse, isLoading } = useGetProductsQuery(undefined);
-  const [deleteProducts, { isLoading: isDeleting }] = useDeleteProductsMutation();
+  const [deleteProducts, { isLoading: isDeleting }] =
+    useDeleteProductsMutation();
 
   if (isLoading) {
     return (
@@ -35,11 +39,11 @@ const ProductTable = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
-    
+
     try {
       await deleteProducts(id).unwrap();
       toast.success("Product deleted successfully!");
-    } catch{
+    } catch {
       toast.error("Failed to delete product.");
     }
   };
@@ -62,22 +66,23 @@ const ProductTable = () => {
               <TableCell className="font-medium">{index + 1}</TableCell>
               <TableCell>
                 {product.images && product.images[0] ? (
-                  <Image 
-                    src={product.images[0]} 
-                    alt={product.title} 
+                  <Image
+                    src={product.images[0]}
+                    alt={product.title}
                     width={40}
                     height={40}
                     className="w-10 h-10 object-cover rounded shadow-sm"
                   />
                 ) : (
-                  <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-[10px]">No Image</div>
+                  <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-[10px]">
+                    No Image
+                  </div>
                 )}
               </TableCell>
               <TableCell className="font-semibold">{product.title}</TableCell>
-              
+
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
-                 
                   <Link href={`/dashboard/products/update/${product.id}`}>
                     <Button
                       variant="outline"
@@ -88,7 +93,6 @@ const ProductTable = () => {
                     </Button>
                   </Link>
 
-                
                   <Button
                     variant="outline"
                     size="sm"
@@ -106,7 +110,9 @@ const ProductTable = () => {
         <TableFooter>
           <TableRow>
             <TableCell colSpan={3}>Total Products</TableCell>
-            <TableCell className="text-right font-bold">{products.length}</TableCell>
+            <TableCell className="text-right font-bold">
+              {products.length}
+            </TableCell>
           </TableRow>
         </TableFooter>
       </Table>
