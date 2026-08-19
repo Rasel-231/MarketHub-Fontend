@@ -13,8 +13,9 @@ export enum tagtypes {
   review="review",
   flag="flag",
   attribute="attribute",
-  assistant="assistant"
+  assistant="assistant",
+  invoice="invoice"
 }
 
-export const tagtypeList = [tagtypes.user,tagtypes.banner,tagtypes.product,tagtypes.contact,tagtypes.category,tagtypes.cart,tagtypes.order,tagtypes.payment,tagtypes.custom,tagtypes.wishlist,tagtypes.review,tagtypes.flag,tagtypes.attribute,tagtypes.assistant];
+export const tagtypeList = [tagtypes.user,tagtypes.banner,tagtypes.product,tagtypes.contact,tagtypes.category,tagtypes.cart,tagtypes.order,tagtypes.payment,tagtypes.custom,tagtypes.wishlist,tagtypes.review,tagtypes.flag,tagtypes.attribute,tagtypes.assistant,tagtypes.invoice];
 

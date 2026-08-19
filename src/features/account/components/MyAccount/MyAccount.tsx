@@ -42,6 +42,12 @@ const MyAccount = () => {
                 <p className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition">
                   My Payment Options
                 </p>
+                <Link
+                  href="/account/receipt-download"
+                  className="text-gray-500 text-sm hover:text-red-500 cursor-pointer transition block"
+                >
+                  Receipt Download
+                </Link>
               </div>
             </div>
 
